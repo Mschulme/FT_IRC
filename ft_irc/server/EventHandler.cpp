@@ -93,7 +93,7 @@ bool IRC_Server::isValidMiddle(const std::string& middle)
 {
 	for (size_t i = 0; i < middle.size(); ++i)
 	{
-		if (middle[i] == '\0' || middle[i] == '\r' || middle[i] == '\n' || middle[i] == ' ' || middle[i] == ':')
+		if (middle[i] == '\0' || middle[i] == ' ' || middle[i] == ':')
 		{
 			return false;
 		}
