@@ -223,7 +223,7 @@ public class Frame extends javax.swing.JFrame {
         clinetContainer.removeAll();
         clinetContainer.setLayout(new BoxLayout(clinetContainer, BoxLayout.Y_AXIS));
 
-        for(int i = 0; i<  200; i++)
+        for(int i = 0; i <  5; i++)
         {
             this.clinetContainer.add(new ClientPanel(new ircClient(StringAddress,port, GlobalConfig.names[i])));
              this.validate();
