@@ -44,11 +44,11 @@ void IRC_Server::CompressClientList(int fd)
 
 std::string IRC_Server::ReceiveNewData(int fd)
 {
-	char buffer[MAXMSG];
-	std::memset(buffer, 0, MAXMSG);
 	int n = 0;
-	std::string complete_message;
 	std::string line;
+	char buffer[MAXMSG];
+	std::string complete_message;
+	std::memset(buffer, 0, MAXMSG);
 
 	while((n = recv(fd, buffer, MAXMSG - 1, 0)) > 0)
 	{
@@ -136,6 +136,7 @@ int IRC_Server::irc_server(int port_number, std::string password)
 				}
 				else
 				{
+                    // std::cout << ReceiveNewData(fds[i].fd) << "|" << std::endl;
 					IRC_Server::EventHandler(fds[i].fd, ReceiveNewData(fds[i].fd), password);
 				}
 			}

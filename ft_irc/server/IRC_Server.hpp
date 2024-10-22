@@ -37,6 +37,8 @@ class IRC_Server
 		std::vector<struct pollfd> fds;
         std::map<int, class IRC_Connected_Client> client_list;
 
+        // Set of Usernames to check for uniqueness.
+
 		struct Message
 		{
 			std::string prefix;

@@ -3,14 +3,13 @@
 
 void IRC_Server::handle_PASS(int fd, const Message& message, const std::string& password)
 {
-    // Check if the client exists in the client list
-    if (client_list.find(fd) == client_list.end()) {
+    if (client_list.find(fd) == client_list.end())
+    {
         std::string error_message = "Client not found.";
         send(fd, error_message.c_str(), error_message.size(), 0);
         return;
     }
 
-    // Check if the provided password matches
     if (message.parameters[0] == password)
     {
         IRC_Connected_Client& client = client_list[fd];
@@ -25,7 +24,6 @@ void IRC_Server::handle_PASS(int fd, const Message& message, const std::string& 
         {
             response_message = "You are already authenticated!";
         }
-
         send(fd, response_message.c_str(), response_message.size(), 0);
     }
     else

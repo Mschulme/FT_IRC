@@ -24,8 +24,8 @@ public class ircClient
          
                    String pass =  "PASS " + GlobalConfig.SERVER_PASS  +"\r\n";
                    String nick =   "NICK " + name + "\r\n";
-                   String user =    "USER " + name  + " 0 * " + name + "rm \r\n";
-                   String join =    "JOIN #room\r\n";
+                   String user =   "USER " + name  + " 0 * " + name + "rm \r\n";
+                   String join =   "JOIN #room\r\n";
                   insertData("authentication : \n " + pass + nick + user + join + "\n");
             
             sock.getOutputStream().write(pass.getBytes());
