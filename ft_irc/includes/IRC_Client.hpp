@@ -36,23 +36,27 @@ private:
 	int client_fd;
 	std::string IPadd;
 	bool	_isAuthenticated;
+	std::string     _nickname;
+    std::string     _username;
+	std::string     _hostname;
 	std::vector<std::string> _channels;
 
 public:
 	IRC_Client();
 	IRC_Client(int fd);
 	~IRC_Client();
-	
-	std::string _nickname;
-	std::string _username;
+
+	void	SetFd(int fd){client_fd = fd;}
+	void	setIpAdd(std::string ipadd){IPadd = ipadd;}
+	void	set_nickname(std::string nickname);
+	void	setAuthStatus(bool	status);
 
 	bool getAuthStatus();
-
-	void setAuthStatus(bool	status);
-
+	std::string     get_nickname();
 	int GetFd(){return client_fd;};
-	void SetFd(int fd){client_fd = fd;}
-	void setIpAdd(std::string ipadd){IPadd = ipadd;}
+	
+	void 		reply(std::string message, int fd);
+	std::string	get_prefix();
 
 };
 
