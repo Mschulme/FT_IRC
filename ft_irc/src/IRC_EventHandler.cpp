@@ -27,8 +27,6 @@ void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, 
 		size_t 		i;
 		std::string receivedCommand = capitalize(message[0]);
 
-		std::cout << "reached_2" << std::endl;
-
 		for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 			if (receivedCommand == commands[i])
 				break;
