@@ -22,7 +22,7 @@
 #include <arpa/inet.h> 
 #include <poll.h>
 
-#include "IRC_Connected_Client.hpp"
+#include "IRC_Client.hpp"
 
 #define MAXMSG 512
 #define MAX_CLIENTS 1024
@@ -35,7 +35,8 @@ class IRC_Server
 		struct sockaddr_in client_address;
 		
 		std::vector<struct pollfd> fds;
-        std::map<int, class IRC_Connected_Client> client_list;
+		typedef std::vector<pollfd>::iterator pollFdIterator;
+        std::map<int, class IRC_Client> client_list;
 
         // Set of Usernames to check for uniqueness.
 
@@ -50,27 +51,29 @@ class IRC_Server
 		static void signal_handler_shutdown(int signum);
 
 	public:
-		int setup(int port_number, std::string password);
+		int setup(int port_number);
 		int irc_server(int port_number, std::string password);
 
-		void AcceptNewClient(void);
+		void AcceptNewClient(int sock, std::vector<pollfd> &pfds);
+		void ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, IRC_Client> &clients, std::string servPass);
 		void CompressClientList(int fd);
 		std::string ReceiveNewData(int fd);
 
-		Message parser_irc_server(std::string received_message);
+		void parser_irc_server(std::string &message, std::map<int, IRC_Client> &clients, int i, std::vector<pollfd> &pfds, std::string servPass);
 		bool isValidCommand(const std::string& command);
 		bool isValidMiddle(const std::string& middle);
 		bool isValidTrailing(const std::string& trailing);
+		void validateInput(std::string port, std::string password);
 
 		// Handling of received messages
-		void EventHandler(int fd, std::string received_message, std::string password);
+		void EventHandler(std::vector<std::string> &incoming, std::map<int, IRC_Client> &clients, int fd, std::string &pass);
 
         // Files for the different commands
-		void handle_PASS(int fd, const Message& message, const std::string& password);
-		void handle_NICK(int fd, Message message);
-		void handle_USER(int fd, Message message);
-		void handle_JOIN(int fd, Message message);
-		void handle_PRIVMSG(int fd, Message message);
+		void handle_PASS(std::vector<std::string> &message, std::map<int, IRC_Client> &clients, int fd, std::string &serverPass);
+		void handle_NICK(int fd, std::vector<std::string> message);
+		void handle_USER(int fd, std::vector<std::string> message);
+		void handle_JOIN(int fd, std::vector<std::string> message);
+		void handle_PRIVMSG(int fd, std::vector<std::string> message);
 
 };
 

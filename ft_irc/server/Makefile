@@ -4,7 +4,7 @@ CXX = c++
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic
 
-SRC = main.cpp IRC_Server.cpp Setup.cpp IRC_EventHandler.cpp IRC_Parser.cpp handle_PASS.cpp handle_JOIN.cpp handle_NICK.cpp handle_USER.cpp handle_PRIVMSG.cpp
+SRC = validator.cpp main.cpp IRC_Server.cpp IRC_Client.cpp Setup.cpp IRC_EventHandler.cpp IRC_Parser.cpp handle_PASS.cpp handle_JOIN.cpp handle_NICK.cpp handle_USER.cpp handle_PRIVMSG.cpp 
 
 OBJ = $(SRC:.cpp=.o)
 

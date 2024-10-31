@@ -1,9 +1,7 @@
 #include "IRC_Server.hpp"
 
-int	IRC_Server::setup(int port_number, std::string password)
+int	IRC_Server::setup(int port_number)
 {
-	(void) password;
-	
 	const int enable = 1;
 	struct pollfd NewPoll;
 	struct sockaddr_in server_address;

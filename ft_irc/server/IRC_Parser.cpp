@@ -1,54 +1,12 @@
 #include "IRC_Server.hpp"
+#include "IRC.hpp"
 
 
-IRC_Server::Message IRC_Server::parser_irc_server(std::string received_message)
+void IRC_Server::parser_irc_server(std::string &message, std::map<int, IRC_Client> &clients, int i, std::vector<pollfd> &pfds, std::string servPass)
 {
-	Message msg;
-	std::istringstream iss(received_message);
-	std::string token;
-
-	// Parse prefix
-	if (received_message[0] == ':')
-	{
-		std::getline(iss, token, ' ');
-		msg.prefix = token.substr(1);
-	}
-
-	// Parse command
-	std::getline(iss, token, ' ');
-	if (isValidCommand(token)) {
-		msg.command = token;
-	} else {
-		std::cerr << "Invalid command: " << token << std::endl;
-		return msg;
-	}
-
-	// Parse parameters
-	while (std::getline(iss, token, ' ')) {
-		if (token[0] == ':') {
-			if (isValidTrailing(token.substr(1))) {
-				msg.parameters.push_back(token.substr(1));
-			} else {
-				std::cerr << "Invalid trailing parameter: " << token.substr(1) << std::endl;
-			}
-			break;
-		} else if (isValidMiddle(token)) {
-			msg.parameters.push_back(token);
-		} else {
-			std::cerr << "Invalid middle parameter: " << token << std::endl;
-		}
-	}
-
-	// Parse trailing parameter
-	std::string trailing;
-	std::getline(iss, trailing);
-	if (!trailing.empty() && isValidTrailing(trailing)) {
-		msg.parameters.push_back(trailing);
-	} else if (!trailing.empty()) {
-		std::cerr << "Invalid trailing parameter: " << trailing << std::endl;
-	}
-
-	return msg;
+	int clientFd = pfds[i].fd;
+	std::vector<std::string> split = ft_split(message);
+	IRC_Server::EventHandler(split, clients, clientFd, servPass);
 }
 
 

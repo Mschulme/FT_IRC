@@ -1,36 +1,43 @@
 #include "IRC_Server.hpp"
 
-
-void IRC_Server::EventHandler(int fd, std::string received_message, std::string password)
+void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, IRC_Client> &clients, int fd, std::string &pass)
 {
-	IRC_Server::Message message;
+	std::string commands[] = {"JOIN", "PASS"};
+	std::string filteredMsg = "";
+	std::vector<std::string> message;
 
-	message = IRC_Server::parser_irc_server(received_message);
+	for (std::vector<std::string>::iterator currentChar = incoming.begin(); currentChar != incoming.end(); ++currentChar)
+	{
+		std::string tempMsg;
+		for (size_t i = 0; i < currentChar->length(); ++i) 
+		{
+			if (isprint((*currentChar)[i]))
+				tempMsg += (*currentChar)[i];
+		}
+		filteredMsg += tempMsg;
+		if (currentChar != incoming.end() - 1)
+		{
+			filteredMsg += " ";
+		}
+		message.push_back(tempMsg);
+	}
+	std::string receivedCommand = capitalize(message[0]);
+	size_t i;
 
-	if (message.command == "PASS")
+	for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+		if (receivedCommand == commands[i])
+			break;
+	switch (i)
 	{
-		IRC_Server::handle_PASS(fd, message, password);
-	}
-	else if (message.command == "JOIN")
-	{
-		IRC_Server::handle_JOIN(fd, message);
-	}
-	else if (message.command == "NICK")
-	{
-		IRC_Server::handle_NICK(fd, message);
-	}
-	else if (message.command == "USER")
-	{
-		IRC_Server::handle_USER(fd, message);
-	}
-	else if (message.command == "PRIVMSG")
-	{
-		IRC_Server::handle_PRIVMSG(fd, message);
-	}	
-	else
-	{
-        std::string error_message = "Unknown command: " + message.command;
-        send(fd, error_message.c_str(), error_message.size(), 0);
-	}
-	
+		case 0:
+			handle_JOIN(fd, message);
+			break;
+		
+		case 1:
+			handle_PASS(message, clients, fd, pass);
+			break;
+
+		default:
+			break;
+		}
 }

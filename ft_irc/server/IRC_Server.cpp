@@ -1,5 +1,5 @@
 #include "IRC_Server.hpp"
-#include "IRC_Connected_Client.hpp"
+#include "IRC_Client.hpp"
 
 bool g_signal_server_shutdown;
 
@@ -24,7 +24,7 @@ void	IRC_Server::CloseFds()
 
 void IRC_Server::CompressClientList(int fd)
 {
-	std::cout << "Removed: "<< client_list[fd].Nickname << std::endl;
+	//std::cout << "Removed: "<< client_list[fd].Nickname << std::endl;
 
 	for (size_t i = 0; i < fds.size(); i++)
 	{
@@ -42,83 +42,67 @@ void IRC_Server::CompressClientList(int fd)
 }
 
 
-std::string IRC_Server::ReceiveNewData(int fd)
+void IRC_Server::AcceptNewClient(int sock, std::vector<pollfd> &pfds)
 {
-	int n = 0;
-	std::string line;
-	char buffer[MAXMSG];
-	std::string complete_message;
-	std::memset(buffer, 0, MAXMSG);
+	int clientFd;
+	sockaddr_in addr = {};
+	socklen_t size = sizeof(addr);
 
-	while((n = recv(fd, buffer, MAXMSG - 1, 0)) > 0)
+	clientFd = accept(sock, (sockaddr *)&addr, &size);
+	if (clientFd == -1)
+		throw std::runtime_error("Error : Failed to accept client on the server socket!");
+	else
 	{
-		complete_message += buffer;
-		std::memset(buffer, 0, MAXMSG);
-		size_t pos;
-		while ((pos = complete_message.find("\\r\\n")) != std::string::npos)
-		{
-			line = complete_message.substr(0, pos);
-			complete_message.erase(0, pos + 2);
-		}
-	}
+		pollfd eachNewClient;
+		eachNewClient.fd = clientFd;
+		eachNewClient.events = POLLIN;
+		eachNewClient.revents = 0;
+		pfds.push_back(eachNewClient);
 
-	if (n < 0)
+		client_list[clientFd] = IRC_Client(clientFd);
+	}
+}
+
+void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, IRC_Client> &clients, std::string servPass)
+{
+	std::string buf;
+	char tempBuf[1024];
+	std::string firstMsg;
+
+	int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf), 0);
+	if (readBytes < 0)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
-		{
-			return complete_message;
-		}
+			return;
 		else
+			throw std::runtime_error("Error : reading data from client!");
+	}
+	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
+	{
+		// clean all clients
+		return;
+	}
+	else
+	{
+		buf.append(tempBuf, readBytes);
+		size_t pos = buf.find("\r\n");
+		while (pos != std::string::npos)
 		{
-			std::cout << "Error: recv() failed with errno " << errno << std::endl;
-			CompressClientList(fd);
-			close(fd);
+			std::string message = buf.substr(0, pos);
+			parser_irc_server(message, clients, i, pfds, servPass);
+			buf.erase(0, pos + 2); // +2 to remove the "\r\n"
+			pos = buf.find("\r\n");
 		}
 	}
-	else if (n == 0)
-	{
-		CompressClientList(fd);
-		close(fd);
-	}
-
-	return complete_message;
 }
 
 
-void IRC_Server::AcceptNewClient(void)
-{
-	struct pollfd NewPoll;
-	IRC_Connected_Client client;
-	struct sockaddr_in client_address;
-	socklen_t len = sizeof(client_address);
-
-	int fd_client = accept(socket_fd, (sockaddr *)&(client_address), &len);
-	if (fd_client == -1)
-		std::cout << "Error: accept()." << std::endl;
-
-	if (fcntl(fd_client, F_SETFL,O_NONBLOCK) == -1)
-		std::cout << "Error: fcntl()." << std::endl;
-
-	NewPoll.fd = fd_client;
-	NewPoll.events = POLLIN;
-	NewPoll.revents = 0;
-
-	client.password_checked = false;
-	client.SetFd(fd_client);
-	client.setIpAdd(inet_ntoa((client_address.sin_addr)));
-
-    client_list[fd_client] = client;
-
-	fds.push_back(NewPoll);
-}
-
-
-int IRC_Server::irc_server(int port_number, std::string password)
+int IRC_Server::irc_server(int port_number, std::string servPass)
 {
 	signal(SIGINT, signal_handler_shutdown);
 	signal(SIGQUIT, signal_handler_shutdown);
 
-	if (setup(port_number, password) == EXIT_SUCCESS)
+	if (setup(port_number) == EXIT_SUCCESS)
 		std::cout << "Log: Setup successful." << std::endl;
 
 	while (g_signal_server_shutdown == false)
@@ -126,18 +110,22 @@ int IRC_Server::irc_server(int port_number, std::string password)
 		if((poll(&fds[0], fds.size(), -1) == -1) && g_signal_server_shutdown == false)
 			throw(std::runtime_error("Error: poll()."));
 		
-		for (size_t i = 0; i < fds.size(); ++i)
+		for (pollFdIterator i = fds.begin(); i != fds.end(); ++i)
 		{
-			if (fds[i].revents & POLLIN)
+			if ((i->revents & POLLIN) == POLLIN)
 			{
-				if (fds[i].fd == socket_fd)
+				if (i->fd == socket_fd)
 				{
-					AcceptNewClient();
+					AcceptNewClient(socket_fd, fds);
+					break;
 				}
 				else
 				{
-                    // std::cout << ReceiveNewData(fds[i].fd) << "|" << std::endl;
-					IRC_Server::EventHandler(fds[i].fd, ReceiveNewData(fds[i].fd), password);
+					size_t index = std::distance(fds.begin(), i);
+
+					ExistingClient(fds, index, client_list, servPass);
+
+					break;
 				}
 			}
 		}
