@@ -37,13 +37,14 @@ private:
 	std::string IPadd;
 	bool	_isAuthenticated;
 	std::vector<std::string> _channels;
-	std::string _nickname;
-	std::string _username;
 
 public:
 	IRC_Client();
 	IRC_Client(int fd);
 	~IRC_Client();
+	
+	std::string _nickname;
+	std::string _username;
 
 	bool getAuthStatus();
 

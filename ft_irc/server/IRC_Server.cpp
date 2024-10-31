@@ -24,8 +24,6 @@ void	IRC_Server::CloseFds()
 
 void IRC_Server::CompressClientList(int fd)
 {
-	//std::cout << "Removed: "<< client_list[fd].Nickname << std::endl;
-
 	for (size_t i = 0; i < fds.size(); i++)
 	{
 		if (fds[i].fd == fd)
@@ -79,7 +77,8 @@ void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, 
 	}
 	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
 	{
-		// clean all clients
+		CompressClientList(pfds[i].fd);
+		close(pfds[i].fd);
 		return;
 	}
 	else

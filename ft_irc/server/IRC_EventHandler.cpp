@@ -2,9 +2,9 @@
 
 void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, IRC_Client> &clients, int fd, std::string &pass)
 {
-	std::string commands[] = {"JOIN", "PASS"};
 	std::string filteredMsg = "";
 	std::vector<std::string> message;
+	std::string commands[] = {"JOIN", "PASS", "NICK", "PRIVMSG"};
 
 	for (std::vector<std::string>::iterator currentChar = incoming.begin(); currentChar != incoming.end(); ++currentChar)
 	{
@@ -21,23 +21,37 @@ void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, 
 		}
 		message.push_back(tempMsg);
 	}
-	std::string receivedCommand = capitalize(message[0]);
-	size_t i;
 
-	for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
-		if (receivedCommand == commands[i])
-			break;
-	switch (i)
+	if (message.size() > 0)  // Fix for Segfault.
 	{
-		case 0:
-			handle_JOIN(fd, message);
-			break;
-		
-		case 1:
-			handle_PASS(message, clients, fd, pass);
-			break;
+		size_t 		i;
+		std::string receivedCommand = capitalize(message[0]);
 
-		default:
-			break;
+		std::cout << "reached_2" << std::endl;
+
+		for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+			if (receivedCommand == commands[i])
+				break;
+		switch (i)
+		{
+			case 0:
+				handle_JOIN(fd, message);
+				break;
+			
+			case 1:
+				handle_PASS(message, clients, fd, pass);
+				break;
+
+			case 2:
+				handle_NICK(fd, message);
+				break;
+
+			case 3:
+				handle_PRIVMSG(fd, message);
+				break;
+
+			default:
+				break;
 		}
+	}
 }

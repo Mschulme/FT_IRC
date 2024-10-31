@@ -18,7 +18,7 @@
 # include <algorithm>
 # include <err.h>
 # include <map>
-#include <cerrno>
+# include <cerrno>
 # include "IRC_Client.hpp"
 # include "IRC_Server.hpp"
 
@@ -26,9 +26,9 @@
 #define NO_AUTH ", couldn't authenticate!"
 #define TO_RUN "To use program : ./ircserv <4-digit PORT> <4-8 CHAR LONG PASSWORD>"
 
-void    validateInput(std::string port, std::string password);
-std::vector<std::string> ft_split(std::string message);
-void    printInClient(std::string message, int fd);
 std::string capitalize(std::string command);
+void    printInClient(std::string message, int fd);
+std::vector<std::string> ft_split(std::string message);
+void    validateInput(std::string port, std::string password);
 
 #endif
