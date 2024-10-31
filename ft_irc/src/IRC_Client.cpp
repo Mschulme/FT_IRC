@@ -11,13 +11,17 @@ IRC_Client::IRC_Client(int fd) : client_fd(fd)
     _hostname = "Localhost";
 }
 
-std::string     IRC_Client::get_prefix() 
-{
-    std::string username = _username.empty() ? "" : "!" + _username;
-    std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
 
-    return _nickname + username + hostname;
+void	IRC_Client::SetFd(int fd)
+{
+    client_fd = fd;
 }
+
+int 	IRC_Client::GetFd(void)
+{
+    return client_fd;
+}
+
 
 bool    IRC_Client::getAuthStatus()
 {
@@ -44,6 +48,14 @@ void IRC_Client::reply(std::string message, int fd)
     message = message + "\n";
     if (send(fd, message.c_str(), message.length(), 0) < 0)
         return ;
+}
+
+std::string     IRC_Client::get_prefix() 
+{
+    std::string username = _username.empty() ? "" : "!" + _username;
+    std::string hostname = _hostname.empty() ? "" : "@" + _hostname;
+
+    return _nickname + username + hostname;
 }
 
 IRC_Client::~IRC_Client() {}

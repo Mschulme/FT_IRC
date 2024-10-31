@@ -1,13 +1,6 @@
 #ifndef IRC_RESPONSE_HPP
 #define IRC_RESPONSE_HPP
 
-#include <iostream>
-#include <string>
-
-#include <cstdlib>
-#include <cstdio>
-#include <time.h>
-
 /* Error Responses */
 
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"

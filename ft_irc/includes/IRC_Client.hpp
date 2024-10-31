@@ -26,35 +26,36 @@
 #define MAX_CLIENTS 1024
 
 #include "IRC.hpp"
-#include <vector>
 
-class Channel;
 
 class IRC_Client
 {
 private:
-	int client_fd;
-	std::string IPadd;
-	bool	_isAuthenticated;
-	std::string     _nickname;
-    std::string     _username;
-	std::string     _hostname;
-	std::vector<std::string> _channels;
+	int 				  client_fd;
+	bool				  _isAuthenticated;
+	std::string 		  IPadd;
+	std::string     	  _nickname;
+    std::string     	  _username;
+	std::string     	  _hostname;
+	std::set<std::string> channels_member;
+	std::set<std::string> channels_operator;
 
 public:
 	IRC_Client();
 	IRC_Client(int fd);
 	~IRC_Client();
 
-	void	SetFd(int fd){client_fd = fd;}
-	void	setIpAdd(std::string ipadd){IPadd = ipadd;}
-	void	set_nickname(std::string nickname);
-	void	setAuthStatus(bool	status);
+	void	SetFd(int fd);
+	int 	GetFd();
 
-	bool getAuthStatus();
+	void			set_nickname(std::string nickname);
 	std::string     get_nickname();
-	int GetFd(){return client_fd;};
+
+	void	setAuthStatus(bool	status);
+	bool 	getAuthStatus();
 	
+	void	setIpAdd(std::string ipadd){IPadd = ipadd;}
+
 	void 		reply(std::string message, int fd);
 	std::string	get_prefix();
 
