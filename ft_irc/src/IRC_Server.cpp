@@ -61,7 +61,7 @@ void IRC_Server::AcceptNewClient(int sock, std::vector<pollfd> &pfds)
 	}
 }
 
-void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, IRC_Client> &clients, std::string servPass)
+void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::string servPass)
 {
 	std::string buf;
 	char tempBuf[1024];
@@ -88,7 +88,7 @@ void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, 
 		while (pos != std::string::npos)
 		{
 			std::string message = buf.substr(0, pos);
-			parser_irc_server(message, clients, i, pfds, servPass);
+			parser_irc_server(message, i, pfds, servPass);
 			buf.erase(0, pos + 2); // +2 to remove the "\r\n"
 			pos = buf.find("\r\n");
 		}
@@ -122,7 +122,7 @@ int IRC_Server::irc_server(int port_number, std::string servPass)
 				{
 					size_t index = std::distance(fds.begin(), i);
 
-					ExistingClient(fds, index, client_list, servPass);
+					ExistingClient(fds, index, servPass);
 
 					break;
 				}

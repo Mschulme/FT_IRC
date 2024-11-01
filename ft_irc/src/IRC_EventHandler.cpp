@@ -1,6 +1,6 @@
 #include "IRC_Server.hpp"
 
-void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, IRC_Client> &clients, int fd, std::string &pass)
+void IRC_Server::EventHandler(std::vector<std::string> &incoming, int fd, std::string &pass)
 {
 	std::string filteredMsg = "";
 	std::vector<std::string> message;
@@ -22,7 +22,7 @@ void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, 
 		message.push_back(tempMsg);
 	}
 
-	if (message.size() > 0)  // Fix for Segfault.
+	if (message.size() > 0)
 	{
 		size_t 		i;
 		std::string receivedCommand = capitalize(message[0]);
@@ -37,7 +37,7 @@ void IRC_Server::EventHandler(std::vector<std::string> &incoming, std::map<int, 
 				break;
 			
 			case 1:
-				handle_PASS(message, clients, fd, pass);
+				handle_PASS(message, fd, pass);
 				break;
 
 			case 2:

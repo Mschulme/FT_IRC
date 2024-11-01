@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRCS = src/handle_JOIN.cpp \
+SRCS =  src/handle_JOIN.cpp \
 		src/handle_NICK.cpp \
 		src/handle_PASS.cpp \
 		src/handle_PRIVMSG.cpp \

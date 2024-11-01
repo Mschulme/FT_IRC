@@ -55,21 +55,21 @@ class IRC_Server
 		int irc_server(int port_number, std::string password);
 
 		void AcceptNewClient(int sock, std::vector<pollfd> &pfds);
-		void ExistingClient(std::vector<pollfd> &pfds, int i, std::map<int, IRC_Client> &clients, std::string servPass);
+		void ExistingClient(std::vector<pollfd> &pfds, int i, std::string servPass);
 		void CompressClientList(int fd);
 		std::string ReceiveNewData(int fd);
 
-		void parser_irc_server(std::string &message, std::map<int, IRC_Client> &clients, int i, std::vector<pollfd> &pfds, std::string servPass);
+		void parser_irc_server(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass);
 		bool isValidCommand(const std::string& command);
 		bool isValidMiddle(const std::string& middle);
 		bool isValidTrailing(const std::string& trailing);
 		void validateInput(std::string port, std::string password);
 
 		// Handling of received messages
-		void EventHandler(std::vector<std::string> &incoming, std::map<int, IRC_Client> &clients, int fd, std::string &pass);
+		void EventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);
 
         // Files for the different commands
-		void handle_PASS(std::vector<std::string> &message, std::map<int, IRC_Client> &clients, int fd, std::string &serverPass);
+		void handle_PASS(std::vector<std::string> &message, int fd, std::string &serverPass);
 		void handle_NICK(int fd, std::vector<std::string> message);
 		void handle_USER(int fd, std::vector<std::string> message);
 		void handle_JOIN(int fd, std::vector<std::string> message);

@@ -2,11 +2,11 @@
 #include "IRC.hpp"
 
 
-void IRC_Server::parser_irc_server(std::string &message, std::map<int, IRC_Client> &clients, int i, std::vector<pollfd> &pfds, std::string servPass)
+void IRC_Server::parser_irc_server(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass)
 {
 	int clientFd = pfds[i].fd;
 	std::vector<std::string> split = ft_split(message);
-	IRC_Server::EventHandler(split, clients, clientFd, servPass);
+	IRC_Server::EventHandler(split, clientFd, servPass);
 }
 
 

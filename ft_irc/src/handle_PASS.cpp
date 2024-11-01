@@ -1,19 +1,29 @@
+#include "IRC_Response.hpp"
+#include "IRC_Client.hpp"
 #include "IRC_Server.hpp"
-#include "IRC.hpp"
 
 
-void IRC_Server::handle_PASS(std::vector<std::string> &message, std::map<int, IRC_Client> &clients, int fd, std::string &serverPass)
+void IRC_Server::handle_PASS(std::vector<std::string> &message, int fd, std::string &serverPass)
 {
-    if (message.size() != 2)
-		return (printInClient("Usage: </PASS> <PASSWORD>", fd));
-	if (serverPass == message[1])
+	// Implement the case, that the password starts with a colon.
+	IRC_Client client = client_list[fd];
+
+	std::cout << client.getAuthStatus() << std::endl;
+
+    if (message.size() == 1)
+    {        
+        return client.reply(ERR_NEEDMOREPARAMS(client.get_nickname(), "PASS"), fd);
+    }
+	
+	if (client.getAuthStatus() == true)
 	{
-		clients[fd].setAuthStatus(true);
-		printInClient("Authentication Successful", fd);
+		return client.reply(ERR_ALREADYREGISTERED(client.get_nickname()), fd);
 	}
-	else
+
+	if (serverPass != message[1])
 	{
-		printInClient("Incorrect Password", fd);
-		return ;
+		return client.reply(ERR_PASSWDMISMATCH(client.get_nickname()), fd);
 	}
+	
+	client_list[fd].setAuthStatus(true);
 }
