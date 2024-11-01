@@ -1,8 +1,6 @@
 #ifndef IRC_RESPONSE_HPP
 #define IRC_RESPONSE_HPP
 
-/* Error Responses */
-
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"
 #define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :Unauthorized command (already registered)"
 #define ERR_PASSWDMISMATCH(source)                      "464 " + source + " :Password is incorrect"
@@ -24,14 +22,10 @@
 #define ERR_USERNOTINCHANNEL(source, nickname, channel) "441 " + source + " " + nickname + " " + channel + " :They aren't on that channel"
 
 
-/* Numeric Responses */
-
 #define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
 #define RPL_NAMREPLY(source, channel, users)            "353 " + source + " = " + channel + " :" + users
 #define RPL_ENDOFNAMES(source, channel)                 "366 " + source + " " + channel + " :End of /NAMES list."
 
-
-/* Command Responses */
 
 #define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel
 #define RPL_PART(source, channel)                       ":" + source + " PART :" + channel
