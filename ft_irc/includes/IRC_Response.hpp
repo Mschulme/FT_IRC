@@ -4,7 +4,7 @@
 /* Error Responses */
 
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"
-#define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :You may not register"
+#define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :Unauthorized command (already registered)"
 #define ERR_PASSWDMISMATCH(source)                      "464 " + source + " :Password is incorrect"
 #define ERR_NONICKNAMEGIVEN(source)                     "431 " + source + " :Nickname not given"
 #define ERR_NICKNAMEINUSE(source)                       "433 " + source + " " + source  + " :Nickname is already in use"
