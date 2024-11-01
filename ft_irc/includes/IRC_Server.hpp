@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-// Standard template libarary
 #include <vector>
 #include <map>
 #include <list>

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-// Standard template libarary
 #include <vector>
 #include <map>
 #include <list>
@@ -37,8 +36,6 @@ private:
 	std::string     	  _nickname;
     std::string     	  _username;
 	std::string     	  _hostname;
-	std::set<std::string> channels_member;
-	std::set<std::string> channels_operator;
 
 public:
 	IRC_Client();
