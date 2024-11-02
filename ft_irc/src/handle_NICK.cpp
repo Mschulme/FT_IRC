@@ -5,26 +5,26 @@
 
 void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
 {
-	IRC_Client client = client_list[fd];
+	IRC_Client client = clientList[fd];
 
     if (message.size() == 1)
     {        
-        return client.reply(ERR_NONICKNAMEGIVEN(client.get_nickname()), fd);
+        return client.reply(ERR_NONICKNAMEGIVEN(client.getNickname()), fd);
     }
     
     std::string Nickname = message[1];
 
-    for (size_t i = 0; i < client_list.size(); ++i)
+    for (size_t i = 0; i < clientList.size(); ++i)
     {
         if (i != (size_t)fd)
         {
-            if (client_list[i].get_nickname() == Nickname)
+            if (clientList[i].getNickname() == Nickname)
             {
-                 client.reply(ERR_NICKNAMEINUSE(client.get_nickname()), fd);       
+                 client.reply(ERR_NICKNAMEINUSE(client.getNickname()), fd);       
             }
         }
     }
 
-    client_list[fd].set_nickname(Nickname);
+    clientList[fd].setNickname(Nickname);
     //client.welcome_message(); 
 }

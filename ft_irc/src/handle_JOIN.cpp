@@ -2,12 +2,63 @@
 
 void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
 {
-	(void) fd;
-    for (size_t i = 0; i< message.size(); ++i)
-        std::cout << message[i] << ' ';
+    std::string channelName;
+    bool channelExists = false;
 
-    std::cout << "\n" << std::endl;
+	if (clientList[fd].getAuthStatus())
+    {
+        channelName = message[1].substr(1, message[1].find(' ') - 1);
+        std::string names;
+        for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
+        {
+            if (it->getName() == channelName)
+            {
+                if (it->isInviteOnly() && !it->isInvited(clientList[fd].getNickname()))
+                    return (sendClientMessage("Channel #" + it->getName() + " is invite only!", fd));
+                if (it->hasPassword())
+                {
+                    if (message.size() != 3)
+                        return (sendClientMessage(" channel usage: </JOIN> #<CHANNEL> <PASSWORD>", fd));\
+                    if (!it->checkChannelKey(message[2]))
+                        return (sendClientMessage("Wrong channel password", fd));
+                }
+                it->addMember(clientList[fd]);
+                sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
+                for (size_t i = 0; i < it->getMembers().size(); i++)
+                {
+                    for (size_t j = 0; j < it->getOperators().size(); j++)
+                    {
+                        if (it->getOperators()[j].getNickname() == it->getMembers()[i].getNickname())
+                            names += "@";
+                    }
+                    names += it->getMembers()[i].getNickname();
+                    names += " ";
+                }
+                sendClientMessage(RPL_TOPIC(clientList[fd].getNickname(), channelName, it->getTopic()), fd);
 
+                for (size_t i = 0; i < it->getMembers().size(); i++)
+                {
+                    sendClientMessage(RPL_NAMREPLY(it->getMembers()[i].getNickname(), channelName, names), it->getMembers()[i].getFd());
+                    sendClientMessage(RPL_ENDOFNAMES(it->getMembers()[i].getNickname(), channelName), it->getMembers()[i].getFd());
+                }
+                std::cout << clientList[fd].getNickname() << " added to " << channelName << std::endl;
+                channelExists = true;
+                break;
+            }
+        }
+        if (!channelExists)
+        {
+            IRC_Channel channel = createChannel(channelName, fd, clientList);
 
-    std::cout << "Handling JOIN command with parameters: " << message[0] << std::endl;
+            sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
+
+            sendClientMessage(RPL_TOPIC(clientList[fd].getNickname(), channelName, channel.getTopic()), fd);
+            
+            sendClientMessage(RPL_NAMREPLY(clientList[fd].getNickname(), channelName, clientList[fd].getNickname()), fd);
+
+            sendClientMessage(RPL_ENDOFNAMES(clientList[fd].getNickname(), channelName), fd);
+
+            std::cout << clientList[fd].getNickname() << " added to " << channelName << std::endl;    
+        }
+    }
 }

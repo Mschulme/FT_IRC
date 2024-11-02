@@ -3,7 +3,7 @@
 
 IRC_Client::IRC_Client() {}
 
-IRC_Client::IRC_Client(int fd) : client_fd(fd)
+IRC_Client::IRC_Client(int fd) : _clientFd(fd)
 {
     _isAuthenticated = false;
 	_nickname = "Default";
@@ -12,14 +12,14 @@ IRC_Client::IRC_Client(int fd) : client_fd(fd)
 }
 
 
-void	IRC_Client::SetFd(int fd)
+void	IRC_Client::setFd(int fd)
 {
-    client_fd = fd;
+    _clientFd = fd;
 }
 
-int 	IRC_Client::GetFd(void)
+int 	IRC_Client::getFd(void)
 {
-    return client_fd;
+    return _clientFd;
 }
 
 
@@ -33,12 +33,12 @@ void    IRC_Client::setAuthStatus(bool status)
     _isAuthenticated = status;
 }
 
-void     IRC_Client::set_nickname(std::string nickname) 
+void     IRC_Client::setNickname(std::string nickname) 
 { 
     _nickname = nickname; 
 }
 
-std::string     IRC_Client::get_nickname() 
+std::string     IRC_Client::getNickname() 
 { 
     return _nickname; 
 }
@@ -50,7 +50,7 @@ void IRC_Client::reply(std::string message, int fd)
         return ;
 }
 
-std::string     IRC_Client::get_prefix() 
+std::string     IRC_Client::getPrefix() 
 {
     std::string username = _username.empty() ? "" : "!" + _username;
     std::string hostname = _hostname.empty() ? "" : "@" + _hostname;

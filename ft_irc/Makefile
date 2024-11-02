@@ -1,17 +1,17 @@
 NAME = ircserv
 
-SRCS =  src/handle_JOIN.cpp \
+SRCS =  src/IRC_Client.cpp \
+		src/IRC_Server.cpp \
+		src/IRC_Channel.cpp \
+		src/handle_JOIN.cpp \
 		src/handle_NICK.cpp \
 		src/handle_PASS.cpp \
 		src/handle_PRIVMSG.cpp \
 		src/handle_USER.cpp \
-		src/IRC_Client.cpp \
 		src/IRC_EventHandler.cpp \
 		src/IRC_Parser.cpp \
-		src/IRC_Server.cpp \
 		src/main.cpp \
 		src/Setup.cpp \
-		src/validator.cpp
 
 OBJS = $(SRCS:src/%.cpp=obj/%.o)
 
