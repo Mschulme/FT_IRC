@@ -38,6 +38,8 @@ class IRC_Channel
         bool       _hasPassword;
         bool       _isinviteOnly;
         bool       _istopicRestricted;
+        bool       _hasLimit;
+        size_t	   _limit;
 
 
     public:
@@ -49,7 +51,7 @@ class IRC_Channel
         void setTopicRestricted(bool topicRestricted);
         void setInviteOnly(bool inviteOnly);
         void setChannelKey(std::string& key);
-        void setOperatorPrivileges(IRC_Client& client);
+        void setOperator(IRC_Client& client);
 
         std::string getName();
         std::string getTopic();
@@ -64,11 +66,14 @@ class IRC_Channel
         bool checkChannelKey(std::string& key);
         void addMember(IRC_Client client);
         void addInvited(std::string &client);
-        void removeOperatorPrivileges(std::string& nickname);
-        bool hasOperatorPrivileges(std::string& nickname);
-        void removeMember(std::string& nickname);
-        bool isclient (std::string& nickname);
-        IRC_Client* findClient(std::string& nickname);
+        void removeOperator(std::string nickname);
+        bool isOperator(std::string nickname);
+        void removeMember(std::string nickname);
+        bool isMember (std::string nickname);
+        IRC_Client* findClient(std::string nickname);
+        void setIsLimit(bool islimit);
+        void setlimit(size_t limit);
+        size_t getLimit();
 
 };
 

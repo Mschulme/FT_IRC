@@ -69,6 +69,7 @@ class IRC_Server
 		void handle_USER(int fd, std::vector<std::string> message);
 		void handle_JOIN(int fd, std::vector<std::string> message);
 		void handle_PRIVMSG(int fd, std::vector<std::string> message);
+		void handle_INVITE(int fd, std::vector<std::string> message);
 
 };
 
