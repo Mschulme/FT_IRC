@@ -2,6 +2,9 @@
 #define IRC_RESPONSE_HPP
 
 #define INVITE_USAGE                                    "Usage: </INVITE> <USER> #<CHANNEL>"
+#define KICK_USAGE                                      "Usage: </KICK> <NETWORK> <CHANNEL> <NICK>"
+#define NO_AUTH                                         ", couldn't authenticate!"
+#define TO_RUN                                          "To use program : ./ircserv <4-digit PORT> <4-8 CHAR LONG PASSWORD>"
 
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"
 #define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :Unauthorized command (already registered)"

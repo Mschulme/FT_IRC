@@ -58,7 +58,7 @@ void sendClientMessage(std::string message, int fd)
         return ;
 }
 
-std::string capitalize(std::string command)
+std::string toUpper(std::string command)
 {
     std::string result;
     for (size_t i = 0; i < command.length(); i++)
@@ -71,3 +71,26 @@ std::string get_prefix(std::string clientName, std::string channelName, std::str
     return std::string(":") + SERVER_IP + code + clientName + " = #" + channelName + " :@";
 }
 
+std::vector<std::string> escapeRawMessage(std::vector<std::string> &rawMessage)
+{
+    std::string escapedMessage = "";
+    std::vector<std::string> message;
+
+    for (std::vector<std::string>::iterator currentChar = rawMessage.begin(); currentChar != rawMessage.end(); ++currentChar)
+	{
+		std::string tempMsg;
+		for (size_t i = 0; i < currentChar->length(); ++i) 
+		{
+			if (isprint((*currentChar)[i]))
+				tempMsg += (*currentChar)[i];
+		}
+		escapedMessage += tempMsg;
+		if (currentChar != rawMessage.end() - 1)
+		{
+			escapedMessage += " ";
+		}
+		message.push_back(tempMsg);
+	}
+
+    return message;
+}

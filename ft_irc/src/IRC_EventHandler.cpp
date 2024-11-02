@@ -1,35 +1,19 @@
 #include "IRC_Server.hpp"
 
-void IRC_Server::eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass)
+void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std::string &pass)
 {
-	std::string filteredMsg = "";
-	std::vector<std::string> message;
 	std::string commands[] = {"JOIN", "PASS", "NICK", "PRIVMSG", "INVITE"};
 
-	for (std::vector<std::string>::iterator currentChar = incoming.begin(); currentChar != incoming.end(); ++currentChar)
-	{
-		std::string tempMsg;
-		for (size_t i = 0; i < currentChar->length(); ++i) 
-		{
-			if (isprint((*currentChar)[i]))
-				tempMsg += (*currentChar)[i];
-		}
-		filteredMsg += tempMsg;
-		if (currentChar != incoming.end() - 1)
-		{
-			filteredMsg += " ";
-		}
-		message.push_back(tempMsg);
-	}
+	std::vector<std::string> message = escapeRawMessage(rawMessage);
 
 	if (message.size() > 0)
 	{
 		size_t 		i;
-		std::string receivedCommand = capitalize(message[0]);
 
 		for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
-			if (receivedCommand == commands[i])
+			if (toUpper(message[0]) == commands[i])
 				break;
+
 		switch (i)
 		{
 			case 0:
