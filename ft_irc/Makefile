@@ -8,6 +8,7 @@ SRCS =  src/IRC_Client.cpp \
 		src/handle_PASS.cpp \
 		src/handle_PRIVMSG.cpp \
 		src/handle_USER.cpp \
+		src/handle_INVITE.cpp \
 		src/IRC_EventHandler.cpp \
 		src/IRC_Parser.cpp \
 		src/main.cpp \

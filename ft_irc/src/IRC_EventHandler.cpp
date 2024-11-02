@@ -4,7 +4,7 @@ void IRC_Server::eventHandler(std::vector<std::string> &incoming, int fd, std::s
 {
 	std::string filteredMsg = "";
 	std::vector<std::string> message;
-	std::string commands[] = {"JOIN", "PASS", "NICK", "PRIVMSG"};
+	std::string commands[] = {"JOIN", "PASS", "NICK", "PRIVMSG", "INVITE"};
 
 	for (std::vector<std::string>::iterator currentChar = incoming.begin(); currentChar != incoming.end(); ++currentChar)
 	{
@@ -46,6 +46,10 @@ void IRC_Server::eventHandler(std::vector<std::string> &incoming, int fd, std::s
 
 			case 3:
 				handle_PRIVMSG(fd, message);
+				break;
+
+			case 4:
+				handle_INVITE(fd, message);
 				break;
 
 			default:

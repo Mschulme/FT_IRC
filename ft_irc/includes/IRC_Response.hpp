@@ -1,6 +1,8 @@
 #ifndef IRC_RESPONSE_HPP
 #define IRC_RESPONSE_HPP
 
+#define INVITE_USAGE                                    "Usage: </INVITE> <USER> #<CHANNEL>"
+
 #define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"
 #define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :Unauthorized command (already registered)"
 #define ERR_PASSWDMISMATCH(source)                      "464 " + source + " :Password is incorrect"

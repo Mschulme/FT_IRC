@@ -6,6 +6,8 @@ IRC_Channel::IRC_Channel(std::string& name, IRC_Client& firstclient) : _name(nam
 	_hasPassword = false;
 	_topic = "Default Topic";
 	_channelKey = "";
+	_hasLimit = true;
+	_limit = 10;
 }
 
 IRC_Channel::~IRC_Channel() {}
@@ -31,8 +33,6 @@ void IRC_Channel::setTopicRestricted(bool topicRestricted) {
 bool IRC_Channel::isTopicRestricted() {
 	return _istopicRestricted;
 }
-
-
 
 void IRC_Channel::setInviteOnly(bool inviteOnly) {
 	this->_isinviteOnly = inviteOnly;
@@ -70,7 +70,7 @@ std::string	IRC_Channel::getPassword()
 	return (_channelKey);
 }
 
-void IRC_Channel::setOperatorPrivileges(IRC_Client& client) {
+void IRC_Channel::setOperator(IRC_Client& client) {
 	_operators.push_back(client);
 }
 
@@ -83,8 +83,8 @@ void IRC_Channel::addInvited(std::string &client)
 	_invited.push_back(client);
 }
 
-void IRC_Channel::removeOperatorPrivileges(std::string& nickname) {
-	if(hasOperatorPrivileges(nickname) == false){
+void IRC_Channel::removeOperator(std::string nickname) {
+	if(isOperator(nickname) == false){
 		std::cout << nickname << " is not an operator of this Channel!" << std::endl;
 		return;
 	}
@@ -95,11 +95,11 @@ void IRC_Channel::removeOperatorPrivileges(std::string& nickname) {
 		}
 	}
 	if(_operators.empty() && !_clients.empty()){
-			setOperatorPrivileges(_clients[0]);
+			setOperator(_clients[0]);
 	}
 }
 
-bool IRC_Channel::hasOperatorPrivileges(std::string& nickname) {
+bool IRC_Channel::isOperator(std::string nickname) {
 	if(_operators.empty())
 		return false;
 	for (std::vector<IRC_Client>::iterator it = _operators.begin(); it != _operators.end(); ++it) {
@@ -109,8 +109,8 @@ bool IRC_Channel::hasOperatorPrivileges(std::string& nickname) {
 	return false;
 }
 
-void IRC_Channel::removeMember(std::string& nickname) {
-	if(isclient(nickname) == false){
+void IRC_Channel::removeMember(std::string nickname) {
+	if(isMember(nickname) == false){
 		std::cout << nickname << " is not a client of this Channel!" << std::endl;
 		return;
 	}
@@ -120,11 +120,11 @@ void IRC_Channel::removeMember(std::string& nickname) {
 			break;
 		}
 	}
-	if(hasOperatorPrivileges(nickname))
-		removeOperatorPrivileges(nickname);
+	if(isOperator(nickname))
+		removeOperator(nickname);
 }
 
-bool IRC_Channel::isclient (std::string& nickname) {
+bool IRC_Channel::isMember (std::string nickname) {
 	if(_clients.empty())
 		return false;
 	for (std::vector<IRC_Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
@@ -146,11 +146,23 @@ std::vector<IRC_Client> IRC_Channel::getOperators()
 	return (_operators);
 }
 
-IRC_Client* IRC_Channel::findClient(std::string& nickname){
+IRC_Client* IRC_Channel::findClient(std::string nickname){
 	for (size_t i = 0; i < _clients.size(); i++)
 	{
 		if (nickname == _clients[i].getNickname())
 			return (&_clients[i]);
 	}
 	return (NULL);
+}
+
+void IRC_Channel::setIsLimit(bool hasLimit){
+	this->_hasLimit = hasLimit;
+}
+
+void IRC_Channel::setlimit(size_t limit){
+	this->_limit = limit;
+}
+
+size_t IRC_Channel::getLimit(){
+	return _limit;
 }
