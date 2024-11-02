@@ -8,7 +8,7 @@ void IRC_Server::handle_INVITE(int fd, const std::vector<std::string> message)
     }
 
     std::string target_nickname = message[1];
-    std::string channel_name = message[2].substr(1, message[2].length() - 1);
+    std::string channel_name = message[2].substr(1);
 
     std::vector<IRC_Channel>::iterator channel_it;
     for (channel_it = channelList.begin(); channel_it != channelList.end(); ++channel_it) {

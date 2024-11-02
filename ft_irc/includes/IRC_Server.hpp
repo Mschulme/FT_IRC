@@ -40,8 +40,6 @@ class IRC_Server
 		std::vector<struct pollfd> _fds;
 		typedef std::vector<pollfd>::iterator pollFdIterator;
        
-        // Set of Usernames to check for uniqueness.
-
 		void closeFds(void);
 		static void signalHandlerShutdown(int signum);
 
@@ -59,7 +57,6 @@ class IRC_Server
 
     	IRC_Channel createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients);
 
-
 		// Handling of received messages
 		void eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);
 
@@ -70,6 +67,7 @@ class IRC_Server
 		void handle_JOIN(int fd, std::vector<std::string> message);
 		void handle_PRIVMSG(int fd, std::vector<std::string> message);
 		void handle_INVITE(int fd, std::vector<std::string> message);
+		void handle_KICK(int fd, std::vector<std::string> message);
 
 };
 

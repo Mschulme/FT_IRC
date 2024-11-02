@@ -23,13 +23,13 @@
 # include "IRC_Server.hpp"
 
 #define SERVER_IP "127.0.0.1"
-#define NO_AUTH ", couldn't authenticate!"
-#define TO_RUN "To use program : ./ircserv <4-digit PORT> <4-8 CHAR LONG PASSWORD>"
 
-std::string capitalize(std::string command);
-void    sendClientMessage(std::string message, int fd);
-std::vector<std::string> ft_split(std::string message);
-void    validateInput(std::string port, std::string password);
-std::string get_prefix(std::string clientName, std::string channelName, std::string code);
+
+std::string                 toUpper(std::string command);
+void                        sendClientMessage(std::string message, int fd);
+std::vector<std::string>    ft_split(std::string message);
+void                        validateInput(std::string port, std::string password);
+std::string                 get_prefix(std::string clientName, std::string channelName, std::string code);
+std::vector<std::string>    escapeRawMessage(std::vector<std::string> &rawMessage);
 
 #endif
