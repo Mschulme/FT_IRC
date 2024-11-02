@@ -1,6 +1,6 @@
 #include "IRC_Server.hpp"
 
-void IRC_Server::EventHandler(std::vector<std::string> &incoming, int fd, std::string &pass)
+void IRC_Server::eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass)
 {
 	std::string filteredMsg = "";
 	std::vector<std::string> message;

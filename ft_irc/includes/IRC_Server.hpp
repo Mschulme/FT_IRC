@@ -22,50 +22,46 @@
 #include <poll.h>
 
 #include "IRC_Client.hpp"
+#include "IRC_Channel.hpp"
+#include "IRC_Response.hpp"
+
 
 #define MAXMSG 512
 #define MAX_CLIENTS 1024
 
+class IRC_Channel;
 
 class IRC_Server
 {
 	private:
-		int socket_fd;
-		struct sockaddr_in client_address;
+		int _socketFD;
+		struct sockaddr_in _clientAddress;
 		
-		std::vector<struct pollfd> fds;
+		std::vector<struct pollfd> _fds;
 		typedef std::vector<pollfd>::iterator pollFdIterator;
-        std::map<int, class IRC_Client> client_list;
-
+       
         // Set of Usernames to check for uniqueness.
 
-		struct Message
-		{
-			std::string prefix;
-			std::string command;
-			std::vector<std::string> parameters;
-		};
-
-		void CloseFds(void);
-		static void signal_handler_shutdown(int signum);
+		void closeFds(void);
+		static void signalHandlerShutdown(int signum);
 
 	public:
+	    std::map<int, class IRC_Client> clientList;
+		std::vector<IRC_Channel> channelList;
 		int setup(int port_number);
 		int irc_server(int port_number, std::string password);
 
-		void AcceptNewClient(int sock, std::vector<pollfd> &pfds);
-		void ExistingClient(std::vector<pollfd> &pfds, int i, std::string servPass);
-		void CompressClientList(int fd);
-		std::string ReceiveNewData(int fd);
+		void acceptNewClient(int sock, std::vector<pollfd> &pfds);
+		void existingClient(std::vector<pollfd> &pfds, int i, std::string servPass);
+		void compressClientList(int fd);
 
-		void parser_irc_server(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass);
-		bool isValidCommand(const std::string& command);
-		bool isValidMiddle(const std::string& middle);
-		bool isValidTrailing(const std::string& trailing);
-		void validateInput(std::string port, std::string password);
+		void parser(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass);
+
+    	IRC_Channel createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients);
+
 
 		// Handling of received messages
-		void EventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);
+		void eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);
 
         // Files for the different commands
 		void handle_PASS(std::vector<std::string> &message, int fd, std::string &serverPass);

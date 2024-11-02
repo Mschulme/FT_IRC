@@ -3,44 +3,51 @@
 
 bool g_signal_server_shutdown;
 
-void IRC_Server::signal_handler_shutdown(int signum)
+void IRC_Server::signalHandlerShutdown(int signum)
 {
 	(void) signum;
 	g_signal_server_shutdown = true;
 }
 
-
-void	IRC_Server::CloseFds()
+IRC_Channel	IRC_Server::createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients)
 {
-	for (size_t i = 0; i < client_list.size(); ++i)
+	IRC_Channel chan(name, clients[fd]);
+	channelList.push_back(chan);
+	return (chan);
+}
+
+
+void	IRC_Server::closeFds()
+{
+	for (size_t i = 0; i < clientList.size(); ++i)
 	{
-		close(client_list[i].GetFd());
+		close(clientList[i].getFd());
 	}
-	if (socket_fd != -1)
+	if (_socketFD != -1)
 	{
-		close(socket_fd);
+		close(_socketFD);
 	}
 }
 
-void IRC_Server::CompressClientList(int fd)
+void IRC_Server::compressClientList(int fd)
 {
-	for (size_t i = 0; i < fds.size(); i++)
+	for (size_t i = 0; i < _fds.size(); i++)
 	{
-		if (fds[i].fd == fd)
+		if (_fds[i].fd == fd)
 		{
-			fds.erase(fds.begin() + i); 
+			_fds.erase(_fds.begin() + i); 
 			break;
 		}
 	}
 
-	if (client_list.find(fd) != client_list.end())
+	if (clientList.find(fd) != clientList.end())
 	{
-		client_list.erase(fd);
+		clientList.erase(fd);
 	}
 }
 
 
-void IRC_Server::AcceptNewClient(int sock, std::vector<pollfd> &pfds)
+void IRC_Server::acceptNewClient(int sock, std::vector<pollfd> &pfds)
 {
 	int clientFd;
 	sockaddr_in addr = {};
@@ -57,11 +64,11 @@ void IRC_Server::AcceptNewClient(int sock, std::vector<pollfd> &pfds)
 		eachNewClient.revents = 0;
 		pfds.push_back(eachNewClient);
 
-		client_list[clientFd] = IRC_Client(clientFd);
+		clientList[clientFd] = IRC_Client(clientFd);
 	}
 }
 
-void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::string servPass)
+void IRC_Server::existingClient(std::vector<pollfd> &pfds, int i, std::string servPass)
 {
 	std::string buf;
 	char tempBuf[1024];
@@ -77,7 +84,7 @@ void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::string se
 	}
 	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
 	{
-		CompressClientList(pfds[i].fd);
+		compressClientList(pfds[i].fd);
 		close(pfds[i].fd);
 		return;
 	}
@@ -88,7 +95,7 @@ void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::string se
 		while (pos != std::string::npos)
 		{
 			std::string message = buf.substr(0, pos);
-			parser_irc_server(message, i, pfds, servPass);
+			parser(message, i, pfds, servPass);
 			buf.erase(0, pos + 2); // +2 to remove the "\r\n"
 			pos = buf.find("\r\n");
 		}
@@ -98,38 +105,38 @@ void IRC_Server::ExistingClient(std::vector<pollfd> &pfds, int i, std::string se
 
 int IRC_Server::irc_server(int port_number, std::string servPass)
 {
-	signal(SIGINT, signal_handler_shutdown);
-	signal(SIGQUIT, signal_handler_shutdown);
+	signal(SIGINT, signalHandlerShutdown);
+	signal(SIGQUIT, signalHandlerShutdown);
 
 	if (setup(port_number) == EXIT_SUCCESS)
 		std::cout << "Log: Setup successful." << std::endl;
 
 	while (g_signal_server_shutdown == false)
 	{
-		if((poll(&fds[0], fds.size(), -1) == -1) && g_signal_server_shutdown == false)
+		if((poll(&_fds[0], _fds.size(), -1) == -1) && g_signal_server_shutdown == false)
 			throw(std::runtime_error("Error: poll()."));
 		
-		for (pollFdIterator i = fds.begin(); i != fds.end(); ++i)
+		for (pollFdIterator i = _fds.begin(); i != _fds.end(); ++i)
 		{
 			if ((i->revents & POLLIN) == POLLIN)
 			{
-				if (i->fd == socket_fd)
+				if (i->fd == _socketFD)
 				{
-					AcceptNewClient(socket_fd, fds);
+					acceptNewClient(_socketFD, _fds);
 					break;
 				}
 				else
 				{
-					size_t index = std::distance(fds.begin(), i);
+					size_t index = std::distance(_fds.begin(), i);
 
-					ExistingClient(fds, index, servPass);
+					existingClient(_fds, index, servPass);
 
 					break;
 				}
 			}
 		}
 	}
-	IRC_Server::CloseFds();
+	IRC_Server::closeFds();
 
 	return (EXIT_SUCCESS);
 }

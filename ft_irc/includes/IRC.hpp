@@ -27,8 +27,9 @@
 #define TO_RUN "To use program : ./ircserv <4-digit PORT> <4-8 CHAR LONG PASSWORD>"
 
 std::string capitalize(std::string command);
-void    printInClient(std::string message, int fd);
+void    sendClientMessage(std::string message, int fd);
 std::vector<std::string> ft_split(std::string message);
 void    validateInput(std::string port, std::string password);
+std::string get_prefix(std::string clientName, std::string channelName, std::string code);
 
 #endif
