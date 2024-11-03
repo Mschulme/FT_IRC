@@ -18,9 +18,9 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                 if (it->hasPassword())
                 {
                     if (message.size() != 3)
-                        return (sendClientMessage(" channel usage: </JOIN> #<CHANNEL> <PASSWORD>", fd));\
+                        return (sendClientMessage(JOIN_USAGE, fd));\
                     if (!it->checkChannelKey(message[2]))
-                        return (sendClientMessage("Wrong channel password", fd));
+                        return (sendClientMessage(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd));
                 }
                 it->addMember(clientList[fd]);
                 sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
@@ -31,8 +31,7 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                         if (it->getOperators()[j].getNickname() == it->getMembers()[i].getNickname())
                             names += "@";
                     }
-                    names += it->getMembers()[i].getNickname();
-                    names += " ";
+                    names += it->getMembers()[i].getNickname() + " ";
                 }
                 sendClientMessage(RPL_TOPIC(clientList[fd].getNickname(), channelName, it->getTopic()), fd);
 

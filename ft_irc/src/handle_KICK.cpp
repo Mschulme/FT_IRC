@@ -25,23 +25,23 @@ void IRC_Server::handle_KICK(int fd, std::vector<std::string> message) {
             }
 
             if (!is_operator) {
-                sendClientMessage("You don't have operator rights", fd);
+                sendClientMessage(ERR_CHANOPRIVSNEEDED(clientList[fd].getNickname(), channelName) , fd);
                 return;
             }
 
             if (targetNickname == clientNickname) {
-                sendClientMessage("You cannot kick yourself out.", fd);
+                sendClientMessage(ERR_KICKYOURSELF, fd);
                 return;
             }
 
             if (!channelIt->isMember(targetNickname)) {
-                sendClientMessage(targetNickname + " was not found in the channel", fd);
+                sendClientMessage(ERR_NOSUCHNICK(clientList[fd].getNickname(), targetNickname), fd);
                 return;
             }
 
             IRC_Client* targetClient = channelIt->findClient(targetNickname);
             if (targetClient) {
-                sendClientMessage("You have been kicked out of #" + channelName + " by an operator", targetClient->getFd());
+                sendClientMessage(INFO_KICKEDOUT(channelName), targetClient->getFd());
                 channelIt->removeMember(targetNickname);
 
                 std::vector<IRC_Client> members = channelIt->getMembers();
@@ -65,7 +65,6 @@ void IRC_Server::handle_KICK(int fd, std::vector<std::string> message) {
 					sendClientMessage(RPL_ENDOFNAMES(members[i].getNickname(), channelName), members[i].getFd());
                 }
 
-                std::cout << targetNickname << " was kicked out of " << channelIt->getName() << std::endl;
                 sendClientMessage("You kicked " + targetNickname + " out of #" + channelIt->getName(), fd);
                 return;
             }

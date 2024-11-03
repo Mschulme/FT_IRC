@@ -18,12 +18,12 @@ void IRC_Server::handle_INVITE(int fd, const std::vector<std::string> message)
     }
 
     if (channel_it == channelList.end()) {
-        sendClientMessage("Couldn't invite " + target_nickname + ". The channel #" + channel_name + " does not exist!", fd);
+        sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channel_it->getName()), fd);
         return;
     }
 
     if (!channel_it->isMember(clientList[fd].getNickname()) || !channel_it->isOperator(clientList[fd].getNickname())) {
-        sendClientMessage("You can't invite " + target_nickname + " to #" + channel_it->getName(), fd);
+        sendClientMessage(ERR_CHANOPRIVSNEEDED(clientList[fd].getNickname(), channel_it->getName()) , fd);
         return;
     }
 
@@ -35,12 +35,12 @@ void IRC_Server::handle_INVITE(int fd, const std::vector<std::string> message)
     }
 
     if (client_it == clientList.end()) {
-        sendClientMessage("Couldn't invite " + target_nickname + ". No user exists with this nickname.", fd);
+        sendClientMessage(ERR_NOSUCHNICK(clientList[fd].getNickname(), target_nickname), fd);
         return;
     }
 
     if (channel_it->getMembers().size() >= static_cast<size_t>(channel_it->getLimit())) {
-        sendClientMessage("Channel " + channel_it->getName() + " has reached its limit!", fd);
+        sendClientMessage("Channel " + channel_it->getName() + " is full", fd);
         return;
     }
 

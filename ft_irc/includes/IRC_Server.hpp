@@ -68,6 +68,7 @@ class IRC_Server
 		void handle_PRIVMSG(int fd, std::vector<std::string> message);
 		void handle_INVITE(int fd, std::vector<std::string> message);
 		void handle_KICK(int fd, std::vector<std::string> message);
+		void handle_PART(int fd, std::vector<std::string> message);
 
 };
 
