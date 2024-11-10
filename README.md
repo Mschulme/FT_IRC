@@ -2,7 +2,7 @@
 5. PRIVMSG
 
 -> MARC
-2. NICK     
+2. NICK   +  
 3. USER     
 4. PASS     
     

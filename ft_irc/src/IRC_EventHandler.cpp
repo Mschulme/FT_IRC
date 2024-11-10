@@ -2,7 +2,7 @@
 
 void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std::string &pass)
 {
-	std::string commands[] = {"JOIN", "PASS", "NICK", "PRIVMSG", "INVITE"};
+	std::string commands[] = {"PASS", "JOIN", "NICK", "PRIVMSG", "INVITE"};
 
 	std::vector<std::string> message = escapeRawMessage(rawMessage);
 
@@ -14,30 +14,36 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 			if (toUpper(message[0]) == commands[i])
 				break;
 
-		switch (i)
+
+		if (i == 0)
 		{
-			case 0:
-				handle_JOIN(fd, message);
-				break;
-			
-			case 1:
-				handle_PASS(message, fd, pass);
-				break;
+			handle_PASS(message, fd, pass);
+		}
+		else
+		{
+			if (clientList[fd].getAuthStatus() != true)
+			{
+				return clientList[fd].reply(ERR_NOTREGISTERED(clientList[fd].getNickname()), fd);
+			}
+			switch (i)
+			{
+				case 1:
+					handle_JOIN(fd, message);
+					break;
+				case 2:
+					handle_NICK(fd, message);
+					break;
+				case 3:
+					handle_PRIVMSG(fd, message);
+					break;
 
-			case 2:
-				handle_NICK(fd, message);
-				break;
+				case 4:
+					handle_INVITE(fd, message);
+					break;
 
-			case 3:
-				handle_PRIVMSG(fd, message);
-				break;
-
-			case 4:
-				handle_INVITE(fd, message);
-				break;
-
-			default:
-				break;
+				default:
+					break;
+			}
 		}
 	}
 }
