@@ -56,6 +56,8 @@ class IRC_Client
 		void 		reply(std::string message, int fd);
 		std::string	getPrefix();
 
+		void 		welcomeMessage();
+
 };
 
 #endif

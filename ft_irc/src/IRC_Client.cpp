@@ -58,4 +58,9 @@ std::string     IRC_Client::getPrefix()
     return _nickname + username + hostname;
 }
 
+void IRC_Client::welcomeMessage()
+{
+    sendClientMessage("Welcome to the server", _clientFd);
+}
+
 IRC_Client::~IRC_Client() {}

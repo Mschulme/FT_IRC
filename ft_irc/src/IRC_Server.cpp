@@ -71,16 +71,17 @@ void IRC_Server::acceptNewClient(int sock, std::vector<pollfd> &pfds)
 void IRC_Server::existingClient(std::vector<pollfd> &pfds, int i, std::string servPass)
 {
 	std::string buf;
+	static std::string oldBuf;
 	char tempBuf[1024];
 	std::string firstMsg;
-
+	
 	int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf), 0);
 	if (readBytes < 0)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 		else
-			throw std::runtime_error("Error : reading data from client!");
+			throw std::runtime_error("Can't read data from client");
 	}
 	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
 	{
@@ -90,13 +91,23 @@ void IRC_Server::existingClient(std::vector<pollfd> &pfds, int i, std::string se
 	}
 	else
 	{
-		buf.append(tempBuf, readBytes);
+		buf = tempBuf;
+		if (oldBuf != "")
+		{
+			buf = oldBuf.append(buf);
+			oldBuf = "";
+		}
 		size_t pos = buf.find("\r\n");
+		if (pos == std::string::npos)
+		{
+			oldBuf = buf;
+			return ;
+		}
 		while (pos != std::string::npos)
 		{
 			std::string message = buf.substr(0, pos);
 			parser(message, i, pfds, servPass);
-			buf.erase(0, pos + 2); // +2 to remove the "\r\n"
+			buf.erase(0, pos + 2);
 			pos = buf.find("\r\n");
 		}
 	}

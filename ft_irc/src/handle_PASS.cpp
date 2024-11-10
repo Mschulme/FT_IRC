@@ -6,21 +6,18 @@
 void IRC_Server::handle_PASS(std::vector<std::string> &message, int fd, std::string &serverPass)
 {
 	// Implement the case, that the password starts with a colon.
-	IRC_Client client = clientList[fd];
-
     if (message.size() == 1)
-    {        
-        return client.reply(ERR_NEEDMOREPARAMS(client.getNickname(), "PASS"), fd);
+    {      
+        return clientList[fd].reply(ERR_NEEDMOREPARAMS(clientList[fd].getNickname(), "PASS"), fd);
     }
-	
-	if (client.getAuthStatus() == true)
+	if (clientList[fd].getAuthStatus() == true)
 	{
-		return client.reply(ERR_ALREADYREGISTERED(client.getNickname()), fd);
+		return clientList[fd].reply(ERR_ALREADYREGISTERED(clientList[fd].getNickname()), fd);
 	}
 
 	if (serverPass != message[1])
 	{
-		return client.reply(ERR_PASSWDMISMATCH(client.getNickname()), fd);
+		return clientList[fd].reply(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd);
 	}
 	
 	clientList[fd].setAuthStatus(true);
