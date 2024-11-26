@@ -14,7 +14,6 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 			if (toUpper(message[0]) == commands[i])
 				break;
 
-
 		if (i == 0)
 		{
 			handle_PASS(message, fd, pass);
@@ -30,9 +29,11 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 				case 1:
 					handle_JOIN(fd, message);
 					break;
+				
 				case 2:
 					handle_NICK(fd, message);
 					break;
+
 				case 3:
 					handle_PRIVMSG(fd, message);
 					break;

@@ -15,11 +15,12 @@ SRCS =  src/IRC_Client.cpp \
 		src/IRC_Parser.cpp \
 		src/main.cpp \
 		src/Setup.cpp \
+		src/validateInput.cpp
 
 OBJS = $(SRCS:src/%.cpp=obj/%.o)
 
 CC = c++
-FLAGS = -Wall -Wextra -Werror -pedantic -std=c++98
+FLAGS = -Wall -Wextra -Werror -std=c++98
 INCLUDES = -I ./includes
 RM = rm -rf
 

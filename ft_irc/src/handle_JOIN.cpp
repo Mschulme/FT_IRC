@@ -18,7 +18,7 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                 if (it->hasPassword())
                 {
                     if (message.size() != 3)
-                        return (sendClientMessage(JOIN_USAGE, fd));\
+                        return (sendClientMessage(JOIN_USAGE, fd));
                     if (!it->checkChannelKey(message[2]))
                         return (sendClientMessage(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd));
                 }

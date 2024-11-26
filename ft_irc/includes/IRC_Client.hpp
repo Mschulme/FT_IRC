@@ -1,25 +1,25 @@
 #ifndef IRC_CLIENT_HPP
 #define IRC_CLIENT_HPP
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
+#include <set>
 #include <map>
 #include <list>
-#include <set>
+#include <string>
+#include <vector>
 
+#include <poll.h>
+#include <cerrno>
+#include <fcntl.h>
 #include <cstdlib>
 #include <cstring>
-#include <cerrno>
+#include <sstream>
+#include <iostream>
 #include <unistd.h>
-#include <fcntl.h>
 #include <signal.h>
+#include <arpa/inet.h> 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h> 
-#include <poll.h>
 
 #define MAXMSG 512
 #define MAX_CLIENTS 1024

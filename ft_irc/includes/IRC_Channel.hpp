@@ -2,25 +2,25 @@
 #define IRC_CHANNEL_HPP
 
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
+#include <set>
 #include <map>
 #include <list>
-#include <set>
+#include <string>
+#include <vector>
 
+#include <poll.h>
+#include <cerrno>
+#include <fcntl.h>
 #include <cstdlib>
 #include <cstring>
-#include <cerrno>
+#include <sstream>
+#include <iostream>
 #include <unistd.h>
-#include <fcntl.h>
 #include <signal.h>
+#include <arpa/inet.h> 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h> 
-#include <poll.h>
 
 #include "../includes/IRC_Client.hpp"
 
