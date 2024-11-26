@@ -1,4 +1,5 @@
 #include "IRC_Channel.hpp"
+#include "IRC_Server.hpp"
 
 IRC_Channel::IRC_Channel(std::string& name, IRC_Client& firstclient) : _name(name), _isinviteOnly(true), _istopicRestricted(true){
 	_clients.push_back(firstclient);
@@ -72,6 +73,37 @@ std::string	IRC_Channel::getPassword()
 
 void IRC_Channel::setOperator(IRC_Client& client) {
 	_operators.push_back(client);
+}
+
+
+IRC_Client IRC_Channel::getClientByName(std::string clientName)
+{
+    IRC_Client client;
+	IRC_Server server;
+
+    for (std::map<int, IRC_Client>::iterator it = server.clientList.begin(); it != server.clientList.end(); ++it)
+    {
+        if (it->second.getNickname() == clientName)
+        {
+            client = it->second;
+            break;
+        }
+    }
+
+    return client;
+}
+
+
+void IRC_Channel::addOperator(std::string nickname)
+{
+	for (std::vector<IRC_Client>::iterator it = _operators.begin(); it != _operators.end(); ++it) {
+		if (it->getNickname() == nickname) {
+			std::cout << nickname << " is already an operator of this Channel!" << std::endl;
+			break;
+		}
+	}
+	IRC_Client client = getClientByName(nickname);
+	setOperator(client);
 }
 
 void IRC_Channel::addMember(IRC_Client client){
@@ -165,4 +197,46 @@ void IRC_Channel::setlimit(size_t limit){
 
 size_t IRC_Channel::getLimit(){
 	return _limit;
+}
+
+/////
+
+void handleInviteOnly(IRC_Channel& channel, bool add) {
+    if (add) {
+        channel.setInviteOnly(true);
+    } else {
+        channel.setInviteOnly(false);
+    }
+}
+
+void handleTopicRestrict(IRC_Channel& channel, bool add) {
+    if (add) {
+        channel.setTopicRestricted(true);
+    } else {
+        channel.setTopicRestricted(false);
+    }
+}
+
+void handleChannelKey(IRC_Channel& channel, bool add, std::string& key) {
+    if (add) {
+        channel.setChannelKey(key);
+    } else {
+        channel.removeKey();
+    }
+}
+
+void handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user) {
+    if (add) {
+        channel.addOperator(user);
+    } else {
+        channel.removeOperator(user);
+    }
+}
+
+void handleUserLimit(IRC_Channel& channel, bool add, const std::string& limit) {
+    if (add) {
+        channel.setlimit(std::atoi(limit.c_str()));
+    } else {
+        channel.removeUserLimit();
+    }
 }
