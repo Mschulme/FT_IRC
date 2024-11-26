@@ -11,6 +11,8 @@
 #define ERR_KICKYOURSELF                                "Can't kick yourself out. There is PART command for this"
 #define INFO_KICKEDOUT(channel)                         "You have been kicked out of #" + channel 
 
+#define ERR_UNKNOWNMODE(source, modechar)               std::string(":") + SERVER_IP + " 472 " + source + modechar + " :is unknown mode char to me"
+
 #define ERR_NOTREGISTERED(source)                       std::string(":") + SERVER_IP + " 451 " + source + " :You have not registered"
 #define ERR_ALREADYREGISTERED(source)                   std::string(":") + SERVER_IP + " 462 " + source + " :Unauthorized command (already registered)"
 #define ERR_PASSWDMISMATCH(source)                      std::string(":") + SERVER_IP + " 464 " + source + " :Password is incorrect"

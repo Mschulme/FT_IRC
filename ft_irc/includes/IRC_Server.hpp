@@ -55,6 +55,7 @@ class IRC_Server
 		void parser(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass);
 
     	IRC_Channel createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients);
+		IRC_Channel getChannelByName(std::string channelName);
 
 		void eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);
 
@@ -66,6 +67,7 @@ class IRC_Server
 		void handle_INVITE(int fd, std::vector<std::string> message);
 		void handle_PRIVMSG(int fd, std::vector<std::string> message);
 		void handle_PASS(std::vector<std::string> &message, int fd, const std::string &serverPass);
+		void handle_MODE(int fd, std::vector<std::string> message);
 
 };
 
