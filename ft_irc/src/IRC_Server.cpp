@@ -9,29 +9,11 @@ void IRC_Server::signalHandlerShutdown(int signum)
 	g_signal_server_shutdown = true;
 }
 
-
 IRC_Channel	IRC_Server::createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients)
 {
 	IRC_Channel chan(name, clients[fd]);
 	channelList.push_back(chan);
 	return (chan);
-}
-
-
-IRC_Channel IRC_Server::getChannelByName(std::string channelName)
-{
-    IRC_Channel channel;
-
-    for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
-    {
-        if (it->getName() == channelName)
-        {
-            channel = *it;
-            break;
-        }
-    }
-
-    return channel;
 }
 
 
@@ -46,7 +28,6 @@ void	IRC_Server::closeFds()
 		close(_socketFD);
 	}
 }
-
 
 void IRC_Server::compressClientList(int fd)
 {
@@ -66,68 +47,70 @@ void IRC_Server::compressClientList(int fd)
 }
 
 
-void IRC_Server::acceptNewClient(int sock, std::vector<pollfd>& pfds)
+void IRC_Server::acceptNewClient(int sock, std::vector<pollfd> &pfds)
 {
-    sockaddr_in addr = {};
-    socklen_t size = sizeof(addr);
+	int clientFd;
+	sockaddr_in addr = {};
+	socklen_t size = sizeof(addr);
 
-    int clientFd = accept(sock, reinterpret_cast<sockaddr*>(&addr), &size);
-    if (clientFd == -1)
+	clientFd = accept(sock, (sockaddr *)&addr, &size);
+	if (clientFd == -1)
+		throw std::runtime_error("Error : Failed to accept client on the server socket!");
+	else
 	{
-        throw std::runtime_error("Error: Failed to accept client on the server socket!");
-    }
+		pollfd eachNewClient;
+		eachNewClient.fd = clientFd;
+		eachNewClient.events = POLLIN;
+		eachNewClient.revents = 0;
+		pfds.push_back(eachNewClient);
 
-    pollfd eachNewClient;
-    eachNewClient.fd = clientFd;
-    eachNewClient.events = POLLIN;
-    eachNewClient.revents = 0;
-    pfds.push_back(eachNewClient);
-
-    clientList[clientFd] = IRC_Client(clientFd);
+		clientList[clientFd] = IRC_Client(clientFd);
+	}
 }
 
-
-void IRC_Server::existingClient(std::vector<pollfd>& pfds, int i, const std::string& servPass)
+void IRC_Server::existingClient(std::vector<pollfd> &pfds, int i, const std::string &servPass)
 {
-    char tempBuf[1024] = {0};
-    static std::string oldBuf;
-
-    int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf), 0);
-    if (readBytes < 0)
+	std::string buf;
+	char tempBuf[1024];
+	std::string firstMsg;
+	static std::string oldBuf;
+	
+	int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf), 0);
+	if (readBytes < 0)
 	{
-        if (errno != EAGAIN && errno != EWOULDBLOCK)
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			return;
+		else
+			throw std::runtime_error("Can't read data from client");
+	}
+	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
+	{
+		compressClientList(pfds[i].fd);
+		close(pfds[i].fd);
+		return;
+	}
+	else
+	{
+		buf = tempBuf;
+		if (oldBuf != "")
 		{
-            throw std::runtime_error("Error: Cannot read data from client");
-        }
-        return;
-    }
-    if (readBytes == 0 || (pfds[i].revents & (POLLHUP | POLLERR)))
-	{
-        compressClientList(pfds[i].fd);
-        close(pfds[i].fd);
-        return;
-    }
-
-    std::string buf(tempBuf, readBytes);
-    if (!oldBuf.empty())
-	{
-        buf.insert(0, oldBuf);
-        oldBuf.clear();
-    }
-
-    size_t pos;
-    while ((pos = buf.find("\r\n")) != std::string::npos)
-	{
-        std::string message = buf.substr(0, pos);
-		std::cout << message << std::endl;
-        parser(message, i, pfds, servPass);
-        buf.erase(0, pos + 2);
-    }
-
-    if (!buf.empty())
-	{
-        oldBuf = buf;
-    }
+			buf = oldBuf.append(buf);
+			oldBuf = "";
+		}
+		size_t pos = buf.find("\r\n");
+		if (pos == std::string::npos)
+		{
+			oldBuf = buf;
+			return ;
+		}
+		while (pos != std::string::npos)
+		{
+			std::string message = buf.substr(0, pos);
+			parser(message, i, pfds, servPass);
+			buf.erase(0, pos + 2);
+			pos = buf.find("\r\n");
+		}
+	}
 }
 
 
@@ -163,5 +146,6 @@ int IRC_Server::irc_server(int port_number, std::string servPass)
 		}
 	}
 	IRC_Server::closeFds();
+
 	return (EXIT_SUCCESS);
 }

@@ -7,9 +7,9 @@ int	IRC_Server::setup(int port_number)
 	struct sockaddr_in server_address;
 	
 	std::memset((char *)&server_address, 0, sizeof(server_address));
-	server_address.sin_port = htons(port_number);
 	server_address.sin_family = AF_INET;
 	server_address.sin_addr.s_addr = INADDR_ANY;
+	server_address.sin_port = htons(port_number);
 
 	_socketFD = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socketFD < 0)

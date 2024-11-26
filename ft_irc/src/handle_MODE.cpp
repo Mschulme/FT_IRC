@@ -1,7 +1,11 @@
 #include "IRC_Server.hpp"
+#include "IRC_Channel.hpp"
 
-void IRC_Server::handle_MODE(int fd, std::vector<std::string> message) {
-   if (message.size() < 3) {
+
+void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
+{
+    if (message.size() < 3)
+    {
         clientList[fd].reply(ERR_NEEDMOREPARAMS(clientList[fd].getNickname(), "MODE"), fd);
         return;
     }
@@ -10,11 +14,13 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message) {
     std::string modeString = message[2];
     std::string parameter = (message.size() > 3) ? message[3] : "";
 
+    /*
     IRC_Channel channel = getChannelByName(channelName);
-
     bool add = true;
-    for (std::string::size_type i = 0; i < modeString.size(); ++i) {
-        switch (modeString[i]) {
+    for (std::string::size_type i = 0; i < modeString.size(); ++i)
+    {
+        switch (modeString[i])
+        {
             case '+':
                 add = true;
                 break;
@@ -22,7 +28,7 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message) {
                 add = false;
                 break;
             case 'i':
-                handleInviteOnly(channel, add);
+                channel.handleInviteOnly(channel, add);
                 break;
             case 't':
                 handleTopicRestrict(channel, add);
@@ -41,4 +47,5 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message) {
                 break;
         }
     }
+    */
 }

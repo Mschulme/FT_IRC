@@ -47,12 +47,16 @@ class IRC_Channel
         IRC_Channel();
         ~IRC_Channel();
 
+
+        void removeKey(void);
+        void removeUserLimit(void);
         void setTopic(std::string& topic);
-        void setTopicRestricted(bool topicRestricted);
         void setInviteOnly(bool inviteOnly);
-        void setChannelKey(std::string& key);
         void setOperator(IRC_Client& client);
+        void setChannelKey(std::string& key);
         void addOperator(std::string nickname);
+        void setTopicRestricted(bool topicRestricted);
+
 
         std::string getName();
         std::string getTopic();
@@ -60,6 +64,7 @@ class IRC_Channel
         std::vector<IRC_Client > getMembers();
         std::vector<IRC_Client > getOperators();
         IRC_Client getClientByName(std::string clientName);
+
 
         bool isTopicRestricted();
         bool isInviteOnly();
@@ -76,6 +81,7 @@ class IRC_Channel
         void setIsLimit(bool islimit);
         void setlimit(size_t limit);
         size_t getLimit();
+
 
         void handleInviteOnly(IRC_Channel& channel, bool add);
         void handleTopicRestrict(IRC_Channel& channel, bool add);
