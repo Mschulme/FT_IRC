@@ -4,6 +4,8 @@
 
 void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
 {
+    IRC_Server server;
+
     if (message.size() < 3)
     {
         clientList[fd].reply(ERR_NEEDMOREPARAMS(clientList[fd].getNickname(), "MODE"), fd);
@@ -14,8 +16,8 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
     std::string modeString = message[2];
     std::string parameter = (message.size() > 3) ? message[3] : "";
 
-    /*
-    IRC_Channel channel = getChannelByName(channelName);
+    
+    IRC_Channel channel = server.getChannelByName(channelName);
     bool add = true;
     for (std::string::size_type i = 0; i < modeString.size(); ++i)
     {
@@ -31,21 +33,21 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
                 channel.handleInviteOnly(channel, add);
                 break;
             case 't':
-                handleTopicRestrict(channel, add);
+                channel.handleTopicRestrict(channel, add);
                 break;
             case 'k':
-                handleChannelKey(channel, add, parameter);
+                channel.handleChannelKey(channel, add, parameter);
                 break;
             case 'o':
-                handleOperatorPrivilege(channel, add, parameter);
+                channel.handleOperatorPrivilege(channel, add, parameter);
                 break;
             case 'l':
-                handleUserLimit(channel, add, parameter);
+                channel.handleUserLimit(channel, add, parameter);
                 break;
             default:
                 clientList[fd].reply(ERR_UNKNOWNMODE(clientList[fd].getNickname(), std::string(1, modeString[i])), fd);
                 break;
         }
     }
-    */
+    
 }

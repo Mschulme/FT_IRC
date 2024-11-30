@@ -1,5 +1,6 @@
 #include "IRC_Server.hpp"
 #include "IRC_Client.hpp"
+#include "IRC_Channel.hpp"
 
 bool g_signal_server_shutdown;
 
@@ -14,6 +15,21 @@ IRC_Channel	IRC_Server::createChannel(std::string &name, int fd, std::map<int, I
 	IRC_Channel chan(name, clients[fd]);
 	channelList.push_back(chan);
 	return (chan);
+}
+
+
+IRC_Channel IRC_Server::getChannelByName(std::string channelName)
+{
+    IRC_Channel channel;
+    for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
+    {
+        if (it->getName() == channelName)
+        {
+            channel = *it;
+            break;
+        }
+    }
+    return channel;
 }
 
 
