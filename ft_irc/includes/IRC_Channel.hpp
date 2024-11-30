@@ -88,6 +88,7 @@ class IRC_Channel
         void handleChannelKey(IRC_Channel& channel, bool add, std::string& key);
         void handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user);
         void handleUserLimit(IRC_Channel& channel, bool add, const std::string& limit);
+        void broadcastMessage(std::string message);
 
 };
 

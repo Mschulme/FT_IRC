@@ -12,6 +12,7 @@ SRCS =  src/IRC_Client.cpp \
 		src/handle_KICK.cpp \
 		src/handle_PART.cpp \
 		src/handle_MODE.cpp \
+		src/handle_TOPIC.cpp \
 		src/IRC_EventHandler.cpp \
 		src/IRC_Parser.cpp \
 		src/main.cpp \
