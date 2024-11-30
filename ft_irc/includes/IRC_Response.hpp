@@ -17,7 +17,10 @@
 #define ERR_ALREADYREGISTERED(source)                   std::string(":") + SERVER_IP + " 462 " + source + " :Unauthorized command (already registered)"
 #define ERR_PASSWDMISMATCH(source)                      std::string(":") + SERVER_IP + " 464 " + source + " :Password is incorrect"
 #define ERR_NONICKNAMEGIVEN(source)                     std::string(":") + SERVER_IP + " 431 " + source + " :Nickname not given"
+#define ERR_ERRONEUSNICKNAME(source)                    std::string(":") + SERVER_IP + " 432 " + source + " :Erroneous nickname"
 #define ERR_NICKNAMEINUSE(source)                       std::string(":") + SERVER_IP + " 433 " + source + " " + source  + " :Nickname is already in use"
+
+
 
 #define ERR_UNKNOWNCOMMAND(source, command)             std::string(":") + SERVER_IP + " 421 " + source + " " + command + " :Unknown command"
 #define ERR_NEEDMOREPARAMS(source, command)             std::string(":") + SERVER_IP + " 461 " + source + " " + command + " :Not enough parameters"

@@ -1,7 +1,6 @@
-#include "IRC_Response.hpp"
-#include "IRC_Client.hpp"
 #include "IRC_Server.hpp"
 
+static bool Forbidden_Character(const std::string& str);
 
 void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
 {
@@ -13,6 +12,8 @@ void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
     }
     
     std::string nickname = message[1];
+    if (Forbidden_Character(nickname) == true)
+        return client.reply(ERR_ERRONEUSNICKNAME(client.getNickname()), fd);
 
     for (size_t i = 0; i < clientList.size(); ++i)
     {
@@ -20,11 +21,22 @@ void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
         {
             if (clientList[i].getNickname() == nickname)
             {
-                 client.reply(ERR_NICKNAMEINUSE(client.getNickname()), fd);       
+                return client.reply(ERR_NICKNAMEINUSE(client.getNickname()), fd);       
             }
         }
     }
-
+    if (clientList[fd].getNickname() == "Default")
+        client.welcomeMessage();
     clientList[fd].setNickname(nickname);
-    client.welcomeMessage();
+}
+
+
+static bool Forbidden_Character(const std::string& str)
+{
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+    {
+        if (*it == ' ' || *it == ',' || *it == '*' || *it == '?' || *it == '!' || *it == '@' || *it == '.')
+            return true;
+    }
+    return false;
 }

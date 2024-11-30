@@ -111,7 +111,8 @@ void IRC_Channel::addOperator(std::string nickname)
 	setOperator(client);
 }
 
-void IRC_Channel::addMember(IRC_Client client){
+void IRC_Channel::addMember(IRC_Client client)
+{
 	_clients.push_back(client);
 }
 

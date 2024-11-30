@@ -11,10 +11,12 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
         std::string names;
         for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
         {
+            std::cout << it->getName() << channelName << std::endl;
             if (it->getName() == channelName)
             {
                 if (it->isInviteOnly() && !it->isInvited(clientList[fd].getNickname()))
                     return (sendClientMessage("Channel #" + it->getName() + " is invite only!", fd));
+                
                 if (it->hasPassword())
                 {
                     if (message.size() != 3)
@@ -22,6 +24,7 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                     if (!it->checkChannelKey(message[2]))
                         return (sendClientMessage(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd));
                 }
+                
                 it->addMember(clientList[fd]);
                 sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
                 for (size_t i = 0; i < it->getMembers().size(); i++)

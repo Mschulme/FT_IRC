@@ -11,16 +11,39 @@ void IRC_Server::handle_INVITE(int fd, const std::vector<std::string> message)
     std::string channel_name = message[2].substr(1);
 
     std::vector<IRC_Channel>::iterator channel_it;
-    for (channel_it = channelList.begin(); channel_it != channelList.end(); ++channel_it) {
-        if (channel_it->getName() == channel_name) {
+    for (channel_it = channelList.begin(); channel_it != channelList.end(); ++channel_it)
+    {
+        if (channel_it->getName() == channel_name)
+        {
             break;
         }
     }
 
-    if (channel_it == channelList.end()) {
-        sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channel_it->getName()), fd);
-        return;
+    if (channel_it == channelList.end())
+    {
+        return sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channel_it->getName()), fd);
     }
+
+    IRC_Client target_client;
+    bool found = false;
+    for (size_t i = 0; i < clientList.size(); ++i)
+    {
+        if (clientList[i].getNickname() == target_nickname)
+        {
+            target_client = clientList[i]; 
+            found = true; 
+            break; 
+        }
+    }
+
+    // Check if it is correct
+    if (!found)
+    {
+        return sendClientMessage(ERR_NOSUCHNICK(clientList[fd].getNickname(), channel_it->getName()), fd);
+    }
+
+    channel_it->addMember(target_client);
+
 
     if (!channel_it->isMember(clientList[fd].getNickname()) || !channel_it->isOperator(clientList[fd].getNickname())) {
         sendClientMessage(ERR_CHANOPRIVSNEEDED(clientList[fd].getNickname(), channel_it->getName()) , fd);

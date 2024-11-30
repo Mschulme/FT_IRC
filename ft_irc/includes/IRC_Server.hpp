@@ -6,12 +6,14 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include <poll.h>
 #include <cerrno>
 #include <fcntl.h>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <sstream>
 #include <iostream>
 #include <unistd.h>

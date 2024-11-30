@@ -32,9 +32,9 @@ class IRC_Channel
         std::string     _name;
         std::string     _topic;
         std::string     _channelKey;
-        std::vector<IRC_Client>   _clients;
-        std::vector<IRC_Client>   _operators;
-        std::vector<std::string > _invited;
+        std::vector<IRC_Client>     _clients;
+        std::vector<IRC_Client>     _operators;
+        std::vector<std::string>    _invited;
         bool       _hasPassword;
         bool       _isinviteOnly;
         bool       _istopicRestricted;
@@ -61,15 +61,15 @@ class IRC_Channel
         std::string getName();
         std::string getTopic();
         std::string	getPassword();
-        std::vector<IRC_Client > getMembers();
-        std::vector<IRC_Client > getOperators();
+        std::vector<IRC_Client> getMembers();
+        std::vector<IRC_Client> getOperators();
         IRC_Client getClientByName(std::string clientName);
 
 
-        bool isTopicRestricted();
-        bool isInviteOnly();
-        bool isInvited(std::string name);
         bool hasPassword();
+        bool isInviteOnly();
+        bool isTopicRestricted();
+        bool isInvited(std::string name);
         bool checkChannelKey(std::string& key);
         void addMember(IRC_Client client);
         void addInvited(std::string &client);
@@ -83,12 +83,12 @@ class IRC_Channel
         size_t getLimit();
 
 
+        void broadcastMessage(std::string message);
         void handleInviteOnly(IRC_Channel& channel, bool add);
         void handleTopicRestrict(IRC_Channel& channel, bool add);
         void handleChannelKey(IRC_Channel& channel, bool add, std::string& key);
         void handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user);
         void handleUserLimit(IRC_Channel& channel, bool add, const std::string& limit);
-        void broadcastMessage(std::string message);
 
 };
 
