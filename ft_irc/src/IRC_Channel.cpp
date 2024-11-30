@@ -1,5 +1,5 @@
-#include "IRC_Server.hpp"
 #include "IRC_Channel.hpp"
+#include "IRC_Server.hpp"
 
 IRC_Channel::IRC_Channel(std::string& name, IRC_Client& firstclient) : _name(name), _isinviteOnly(true), _istopicRestricted(true){
 	_clients.push_back(firstclient);
@@ -11,6 +11,8 @@ IRC_Channel::IRC_Channel(std::string& name, IRC_Client& firstclient) : _name(nam
 	_limit = 10;
 }
 
+IRC_Channel::IRC_Channel() {}
+
 IRC_Channel::~IRC_Channel() {}
 
 
@@ -19,36 +21,29 @@ std::string	IRC_Channel::getName()
 	return (_name);
 }
 
-
 void IRC_Channel::setTopic(std::string& topic) {
 	this->_topic = topic;
 }
-
 
 std::string IRC_Channel::getTopic() {
 	return _topic;
 }
 
-
 void IRC_Channel::setTopicRestricted(bool topicRestricted) {
 	this->_istopicRestricted = topicRestricted;
 }
-
 
 bool IRC_Channel::isTopicRestricted() {
 	return _istopicRestricted;
 }
 
-
 void IRC_Channel::setInviteOnly(bool inviteOnly) {
 	this->_isinviteOnly = inviteOnly;
 }
 
-
 bool IRC_Channel::isInviteOnly() {
 	return _isinviteOnly;
 }
-
 
 bool	IRC_Channel::isInvited(std::string name)
 {
@@ -64,22 +59,22 @@ void IRC_Channel::setChannelKey(std::string& key) {
 	this->_channelKey = key;
 }
 
-
 bool IRC_Channel::hasPassword() {
 	return _hasPassword;
 }
 
+void IRC_Channel::removeKey() {
+	_hasPassword = false;
+}
 
 bool IRC_Channel::checkChannelKey(std::string& key) {
 	return key == _channelKey;
 }
 
-
 std::string	IRC_Channel::getPassword()
 {
 	return (_channelKey);
 }
-
 
 void IRC_Channel::setOperator(IRC_Client& client) {
 	_operators.push_back(client);
@@ -99,6 +94,7 @@ IRC_Client IRC_Channel::getClientByName(std::string clientName)
             break;
         }
     }
+
     return client;
 }
 
@@ -115,17 +111,14 @@ void IRC_Channel::addOperator(std::string nickname)
 	setOperator(client);
 }
 
-
 void IRC_Channel::addMember(IRC_Client client){
 	_clients.push_back(client);
 }
-
 
 void IRC_Channel::addInvited(std::string &client)
 {
 	_invited.push_back(client);
 }
-
 
 void IRC_Channel::removeOperator(std::string nickname) {
 	if(isOperator(nickname) == false){
@@ -143,7 +136,6 @@ void IRC_Channel::removeOperator(std::string nickname) {
 	}
 }
 
-
 bool IRC_Channel::isOperator(std::string nickname) {
 	if(_operators.empty())
 		return false;
@@ -153,7 +145,6 @@ bool IRC_Channel::isOperator(std::string nickname) {
 	}
 	return false;
 }
-
 
 void IRC_Channel::removeMember(std::string nickname) {
 	if(isMember(nickname) == false){
@@ -169,7 +160,6 @@ void IRC_Channel::removeMember(std::string nickname) {
 	if(isOperator(nickname))
 		removeOperator(nickname);
 }
-
 
 bool IRC_Channel::isMember (std::string nickname) {
 	if(_clients.empty())
@@ -188,12 +178,10 @@ std::vector<IRC_Client> IRC_Channel::getMembers()
 	return (_clients);
 }
 
-
 std::vector<IRC_Client> IRC_Channel::getOperators()
 {
 	return (_operators);
 }
-
 
 IRC_Client* IRC_Channel::findClient(std::string nickname){
 	for (size_t i = 0; i < _clients.size(); i++)
@@ -204,32 +192,21 @@ IRC_Client* IRC_Channel::findClient(std::string nickname){
 	return (NULL);
 }
 
-
 void IRC_Channel::setIsLimit(bool hasLimit){
 	this->_hasLimit = hasLimit;
 }
-
 
 void IRC_Channel::setlimit(size_t limit){
 	this->_limit = limit;
 }
 
+void IRC_Channel::removeUserLimit(){
+	_hasLimit = false;
+}
 
 size_t IRC_Channel::getLimit(){
 	return _limit;
 }
-
-
-void IRC_Channel::removeKey(void){
-	_channelKey = "";
-}
-
-
-void IRC_Channel::removeUserLimit(void){
-	_hasLimit = false;
-}
-
-
 
 /////
 
