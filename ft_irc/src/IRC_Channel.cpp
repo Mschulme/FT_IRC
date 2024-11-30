@@ -249,3 +249,11 @@ void IRC_Channel::handleUserLimit(IRC_Channel& channel, bool add, const std::str
         channel.removeUserLimit();
     }
 }
+
+void IRC_Channel::broadcastMessage(std::string message)
+{
+    for (std::vector<IRC_Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        (it)->reply(message, it->getFd());
+    }
+}
