@@ -31,11 +31,13 @@ class IRC_Client
 {
 	private:
 		int 				  _clientFd;
+		bool				  _isRegistered;
 		bool				  _isAuthenticated;
 		std::string 		  _ipAdd;
 		std::string     	  _nickname;
 		std::string     	  _username;
 		std::string     	  _hostname;
+		std::string			  _realname;
 
 	public:
 		IRC_Client();
@@ -48,12 +50,21 @@ class IRC_Client
 		void			setNickname(std::string nickname);
 		std::string     getNickname();
 
+		void			setUsername(std::string nickname);
+		std::string     getUsername();
+
+		void			setRealname(std::string realname);
+		std::string     getRealname();
+
 		void	setAuthStatus(bool	status);
 		bool 	getAuthStatus();
 		
-		void	setIpAdd(std::string ipadd){_ipAdd = ipadd;}
+		void	setRegisteredStatus(bool	status);
+		bool 	getRegisteredStatus();
 
-		void 		reply(std::string message, int fd);
+		void		setIpAdd(std::string ipadd){_ipAdd = ipadd;}
+
+		void		reply(std::string message, int fd);
 		std::string	getPrefix();
 
 		void 		welcomeMessage();

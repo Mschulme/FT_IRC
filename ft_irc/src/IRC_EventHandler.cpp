@@ -2,13 +2,13 @@
 
 void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std::string &pass)
 {
-	std::string commands[] = {"PASS", "JOIN", "NICK", "PRIVMSG", "INVITE", "MODE"};
+	std::string commands[] = {"PASS", "JOIN", "NICK", "PRIVMSG", "INVITE", "MODE", "USER"};
 
 	std::vector<std::string> message = escapeRawMessage(rawMessage);
 
 	if (message.size() > 0)
 	{
-		size_t 		i;
+		size_t	i;
 
 		for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 			if (toUpper(message[0]) == commands[i])
@@ -44,6 +44,10 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 
 				case 5:
 					handle_MODE(fd, message);
+					break;
+
+				case 6:
+					handle_USER(fd, message);
 					break;
 
 				default:
