@@ -214,40 +214,50 @@ size_t IRC_Channel::getLimit(){
 void IRC_Channel::handleInviteOnly(IRC_Channel& channel, bool add) {
     if (add) {
         channel.setInviteOnly(true);
+		channel.broadcastMessage("Channel mode is updated to Invite only");
     } else {
         channel.setInviteOnly(false);
+		channel.broadcastMessage("Channel mode Invite only is removed");
     }
 }
 
 void IRC_Channel::handleTopicRestrict(IRC_Channel& channel, bool add) {
     if (add) {
+		channel.broadcastMessage("Channel mode is updated to Topic restricted");
         channel.setTopicRestricted(true);
     } else {
         channel.setTopicRestricted(false);
+		channel.broadcastMessage("Channel mode Topic restricted is removed");
     }
 }
 
 void IRC_Channel::handleChannelKey(IRC_Channel& channel, bool add, std::string& key) {
     if (add) {
         channel.setChannelKey(key);
+		channel.broadcastMessage("Channel mode password protection is added");
     } else {
         channel.removeKey();
+		channel.broadcastMessage("Channel mode password protection is removed");
     }
 }
 
 void IRC_Channel::handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user) {
     if (add) {
         channel.addOperator(user);
+		channel.broadcastMessage(getClientByName(user).getNickname() + "is operator now");
     } else {
         channel.removeOperator(user);
+		channel.broadcastMessage(getClientByName(user).getNickname() + "is not operator anymore");
     }
 }
 
 void IRC_Channel::handleUserLimit(IRC_Channel& channel, bool add, const std::string& limit) {
     if (add) {
         channel.setlimit(std::atoi(limit.c_str()));
+		channel.broadcastMessage("Channel mode member limit is set to " + limit);
     } else {
         channel.removeUserLimit();
+		channel.broadcastMessage("Channel mode member limit is removed ");
     }
 }
 

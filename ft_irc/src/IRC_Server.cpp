@@ -18,21 +18,6 @@ IRC_Channel	IRC_Server::createChannel(std::string &name, int fd, std::map<int, I
 }
 
 
-IRC_Channel IRC_Server::getChannelByName(std::string channelName)
-{
-    IRC_Channel channel;
-    for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
-    {
-        if (it->getName() == channelName)
-        {
-            channel = *it;
-            break;
-        }
-    }
-    return channel;
-}
-
-
 void	IRC_Server::closeFds()
 {
 	for (size_t i = 0; i < clientList.size(); ++i)
