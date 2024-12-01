@@ -123,7 +123,6 @@ void IRC_Channel::addInvited(std::string &client)
 
 void IRC_Channel::removeOperator(std::string nickname) {
 	if(isOperator(nickname) == false){
-		std::cout << nickname << " is not an operator of this Channel!" << std::endl;
 		return;
 	}
 	for (std::vector<IRC_Client>::iterator it = _operators.begin(); it != _operators.end(); ++it) {
@@ -245,10 +244,10 @@ void IRC_Channel::handleChannelKey(IRC_Channel& channel, bool add, std::string& 
 void IRC_Channel::handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user) {
     if (add) {
         channel.addOperator(user);
-		channel.broadcastMessage(getClientByName(user).getNickname() + "is operator now");
+		channel.broadcastMessage(user + " is operator now");
     } else {
         channel.removeOperator(user);
-		channel.broadcastMessage(getClientByName(user).getNickname() + "is not operator anymore");
+		channel.broadcastMessage(user + " is not operator anymore");
     }
 }
 
