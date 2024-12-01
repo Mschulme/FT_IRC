@@ -47,7 +47,7 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 					break;
 
 				case 6:
-					handle_MODE(fd, message);
+					handle_USER(fd, message);
 					break;
 
 				case 7:
