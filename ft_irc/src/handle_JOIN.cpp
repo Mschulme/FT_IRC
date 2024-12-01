@@ -1,5 +1,7 @@
 #include "IRC_Server.hpp"
 
+bool isValidChannelName(const std::string& channel_name);
+
 void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
 {
     std::string channelName;
@@ -7,6 +9,10 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
 
 	if (clientList[fd].getAuthStatus())
     {
+
+        if (isValidChannelName(message[1]) == false)
+            return (sendClientMessage(ERR_BADCHANMASK(clientList[fd].getNickname()), fd));
+
         channelName = message[1].substr(1, message[1].find(' ') - 1);
         std::string names;
         for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
@@ -68,4 +74,30 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
             std::cout << clientList[fd].getNickname() << " added to " << channelName << std::endl;    
         }
     }
+}
+
+
+bool isValidChannelName(const std::string& channel_name)
+{
+    // Channel name must start with a valid prefix character (#, &, !, +)
+    if (channel_name.empty() || (channel_name[0] != '#' && channel_name[0] != '&' && channel_name[0] != '!' && channel_name[0] != '+')) {
+        return false;
+    }
+
+    // Maximum length is usually 50 characters (you can adjust this if needed)
+    const size_t MAX_LENGTH = 50;
+    if (channel_name.length() > MAX_LENGTH) {
+        return false;
+    }
+
+    // Check each character in the channel name
+    for (std::string::const_iterator it = channel_name.begin() + 1; it != channel_name.end(); ++it) {
+        char ch = *it;
+        if (!std::isalnum(ch) && ch != '-' && ch != '_' && ch != '.') {
+            // If character is not alphanumeric and not a valid special character, return false
+            return false;
+        }
+    }
+
+    return true;
 }
