@@ -154,6 +154,7 @@ void IRC_Channel::removeMember(std::string nickname) {
 	}
 	for (std::vector<IRC_Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
 		if (it->getNickname() == nickname) {
+			_invited.erase(std::remove(_invited.begin(), _invited.end(), nickname), _invited.end());
 			_clients.erase(it);
 			break;
 		}

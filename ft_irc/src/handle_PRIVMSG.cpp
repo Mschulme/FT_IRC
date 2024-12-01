@@ -34,14 +34,22 @@ void IRC_Server::handle_PRIVMSG(int fd, std::vector<std::string> message)
         {
             if (it->getName() == channelName)
             {
-                std::vector<IRC_Client> channelClients = it->getMembers();
-                for (std::vector<IRC_Client>::iterator clientIt = channelClients.begin(); clientIt != channelClients.end(); ++clientIt)
+                if (it->isMember(clientList[fd].getNickname()))
                 {
-                    if (clientIt->getFd() != fd)
+                    std::vector<IRC_Client> channelClients = it->getMembers();
+                    for (std::vector<IRC_Client>::iterator clientIt = channelClients.begin(); clientIt != channelClients.end(); ++clientIt)
                     {
-                        clientIt->reply(RPL_PRIVMSG(client.getPrefix(), client.getNickname(), msg_content), clientIt->getFd());
+                        if (clientIt->getFd() != fd)
+                        {
+                            clientIt->reply(RPL_PRIVMSG(client.getPrefix(), client.getNickname(), msg_content), clientIt->getFd());
+                        }
                     }
                 }
+                else
+                {
+                    client.reply(ERR_NOTONCHANNEL(client.getNickname(), target), fd);
+                }
+                
                 return;
             }
         }
