@@ -1,13 +1,13 @@
 #include "IRC_Server.hpp"
 
 void IRC_Server::handle_KICK(int fd, std::vector<std::string> message) {
-    if (message.size() != 4) {
+    if (message.size() != 3) {
         sendClientMessage(KICK_USAGE, fd);
         return;
     }
 
-    std::string targetNickname = message[3].substr(1);
-    std::string channelName = message[2].substr(1);
+    std::string targetNickname = message[2];
+    std::string channelName = message[1].substr(1);
     std::string membersList;
     std::string response;
 

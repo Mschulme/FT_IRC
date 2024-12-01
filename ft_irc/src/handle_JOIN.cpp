@@ -11,7 +11,6 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
         std::string names;
         for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
         {
-            std::cout << it->getName() << channelName << std::endl;
             if (it->getName() == channelName)
             {
                 if (it->isInviteOnly() && !it->isInvited(clientList[fd].getNickname()))
