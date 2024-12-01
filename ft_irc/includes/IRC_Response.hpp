@@ -33,6 +33,10 @@
 #define ERR_CANNOTSENDTOCHAN(source, channel)           std::string(":") + SERVER_IP + " 404 " + source + " #" + channel + " :Cannot send to channel"
 #define ERR_CHANOPRIVSNEEDED(source, channel)           std::string(":") + SERVER_IP + " 482 " + source + " #" + channel + " :You're not channel operator"
 
+
+#define ERR_BADCHANMASK(source)                std::string(":") + SERVER_IP + " 476 " + source + " :Bad Channel Name"
+
+
 #define ERR_NOSUCHNICK(source, nickname)                std::string(":") + SERVER_IP + " 401 " + source + " " + nickname + " :No such nick/channel"
 #define ERR_USERNOTINCHANNEL(source, nickname, channel) std::string(":") + SERVER_IP + " 441 " + source + " " + nickname + " #" + channel + " :They aren't on that channel"
 
