@@ -55,5 +55,9 @@ void IRC_Server::handle_PART(int fd, std::vector<std::string> message)
                 }
             }
         }
+        else
+        {
+            sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channelName), fd);
+        }
     }
 }
