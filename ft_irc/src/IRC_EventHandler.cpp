@@ -2,7 +2,7 @@
 
 void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std::string &pass)
 {
-	std::string commands[] = {"PASS", "JOIN", "NICK", "PRIVMSG", "INVITE", "MODE", "USER"};
+	std::string commands[] = {"PASS", "JOIN", "NICK", "PRIVMSG", "INVITE", "MODE", "USER", "KICK", "TOPIC"};
 
 	std::vector<std::string> message = escapeRawMessage(rawMessage);
 
@@ -48,6 +48,14 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 
 				case 6:
 					handle_MODE(fd, message);
+					break;
+
+				case 7:
+					handle_KICK(fd, message);
+					break;
+					
+				case 8:
+					handle_TOPIC(fd, message);
 					break;
 
 				default:
