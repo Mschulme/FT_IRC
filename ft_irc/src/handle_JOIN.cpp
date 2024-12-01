@@ -24,6 +24,12 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                     if (!it->checkChannelKey(message[2]))
                         return (sendClientMessage(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd));
                 }
+
+                if (it->isMember(clientList[fd].getNickname()))
+                {
+                    clientList[fd].reply(clientList[fd].getNickname() + " is already on channel #" + channelName, fd);
+                    return;
+                }
                 
                 it->addMember(clientList[fd]);
                 sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
