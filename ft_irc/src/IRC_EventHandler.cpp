@@ -63,6 +63,7 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 					break;
 
 				default:
+					clientList[fd].reply(ERR_UNKNOWNCOMMAND(clientList[fd].getNickname(), message[0]), fd);
 					break;
 			}
 		}

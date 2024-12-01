@@ -71,47 +71,45 @@ void IRC_Server::acceptNewClient(int sock, std::vector<pollfd> &pfds)
 
 void IRC_Server::existingClient(std::vector<pollfd> &pfds, int i, const std::string &servPass)
 {
-	std::string buf;
-	char tempBuf[1024];
-	std::string firstMsg;
-	static std::string oldBuf;
-	
-	int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf), 0);
-	if (readBytes < 0)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return;
-		else
-			throw std::runtime_error("Can't read data from client");
-	}
-	else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
-	{
-		compressClientList(pfds[i].fd);
-		close(pfds[i].fd);
-		return;
-	}
-	else
-	{
-		buf = tempBuf;
-		if (oldBuf != "")
-		{
-			buf = oldBuf.append(buf);
-			oldBuf = "";
-		}
-		size_t pos = buf.find("\r\n");
-		if (pos == std::string::npos)
-		{
-			oldBuf = buf;
-			return ;
-		}
-		while (pos != std::string::npos)
-		{
-			std::string message = buf.substr(0, pos);
-			parser(message, i, pfds, servPass);
-			buf.erase(0, pos + 2);
-			pos = buf.find("\r\n");
-		}
-	}
+    std::string buf;
+    char tempBuf[1024] = {0};
+    static std::string oldBuf;
+
+    int readBytes = recv(pfds[i].fd, tempBuf, sizeof(tempBuf) - 1, 0);
+    if (readBytes < 0)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return;
+        else
+            throw std::runtime_error("Can't read data from client");
+    }
+    else if (readBytes == 0 || (pfds[i].revents & POLLHUP) || (pfds[i].revents & POLLERR))
+    {
+        compressClientList(pfds[i].fd);
+        close(pfds[i].fd);
+        return;
+    }
+    else
+    {
+        tempBuf[readBytes] = '\0';
+        buf = tempBuf;
+        if (!oldBuf.empty())
+        {
+            buf = oldBuf + buf;
+            oldBuf.clear();
+        }
+        size_t pos;
+        while ((pos = buf.find("\r\n")) != std::string::npos)
+        {
+            std::string message = buf.substr(0, pos);
+            parser(message, i, pfds, servPass);
+            buf.erase(0, pos + 2);
+        }
+        if (!buf.empty())
+        {
+            oldBuf = buf;
+        }
+    }
 }
 
 
