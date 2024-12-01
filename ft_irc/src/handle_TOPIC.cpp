@@ -12,6 +12,13 @@ void IRC_Server::handle_TOPIC(int fd, std::vector<std::string> message)
     std::string channelName = message[1];
     std::string newTopic = (message.size() > 2) ? message[2] : "";
 
+    if (channelName.empty() || channelName[0] != '#')
+    {
+        return sendClientMessage("Error: Channel name must start with '#'", fd);
+    }
+
+    channelName = channelName.substr(1);
+
     IRC_Channel channel = getChannelByName(channelName);
     if (channel.getName() != channelName) 
     {
@@ -39,7 +46,7 @@ void IRC_Server::handle_TOPIC(int fd, std::vector<std::string> message)
         return;
     }
 
-    if (!channel.isOperator(client.getNickname()))
+    if (!channel.isOperator(client.getNickname()) && channel.isTopicRestricted())
     {
         client.reply("482 " + channelName + " :You're not channel operator", fd);
         return;

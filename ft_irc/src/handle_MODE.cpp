@@ -30,35 +30,42 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
         return;
     }
 
-    bool add = true;
-    for (std::string::size_type i = 0; i < modeString.size(); ++i)
+    if (!channel.isOperator(clientList[fd].getNickname()))
     {
-        switch (modeString[i])
+        return sendClientMessage("You should be operator to change mode", fd);
+    }
+    else
+    {
+        bool add = true;
+        for (std::string::size_type i = 0; i < modeString.size(); ++i)
         {
-            case '+':
-                add = true;
-                break;
-            case '-':
-                add = false;
-                break;
-            case 'i':
-                channel.handleInviteOnly(channel, add);
-                break;
-            case 't':
-                channel.handleTopicRestrict(channel, add);
-                break;
-            case 'k':
-                channel.handleChannelKey(channel, add, parameter);
-                break;
-            case 'o':
-                channel.handleOperatorPrivilege(channel, add, parameter);
-                break;
-            case 'l':
-                channel.handleUserLimit(channel, add, parameter);
-                break;
-            default:
-                clientList[fd].reply(ERR_UNKNOWNMODE(clientList[fd].getNickname(), std::string(1, modeString[i])), fd);
-                break;
+            switch (modeString[i])
+            {
+                case '+':
+                    add = true;
+                    break;
+                case '-':
+                    add = false;
+                    break;
+                case 'i':
+                    channel.handleInviteOnly(channel, add);
+                    break;
+                case 't':
+                    channel.handleTopicRestrict(channel, add);
+                    break;
+                case 'k':
+                    channel.handleChannelKey(channel, add, parameter);
+                    break;
+                case 'o':
+                    channel.handleOperatorPrivilege(channel, add, parameter);
+                    break;
+                case 'l':
+                    channel.handleUserLimit(channel, add, parameter);
+                    break;
+                default:
+                    clientList[fd].reply(ERR_UNKNOWNMODE(clientList[fd].getNickname(), std::string(1, modeString[i])), fd);
+                    break;
+            }
         }
     }
 }
