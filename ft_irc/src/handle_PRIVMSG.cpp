@@ -16,6 +16,10 @@ void IRC_Server::handle_PRIVMSG(int fd, std::vector<std::string> message)
     std::string msg_content;
     for (size_t i = 2; i < message.size(); ++i)
     {
+        if (message[2][0] == ':')
+        {
+            message[2] = message[2].substr(1);
+        }
         msg_content += message[i];
         if (i != message.size() - 1)
         {

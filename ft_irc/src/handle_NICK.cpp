@@ -4,6 +4,8 @@ static bool Forbidden_Character(const std::string& str);
 
 void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
 {
+    std::string oldNickName;
+
 	IRC_Client client = clientList[fd];
     
     if (message.size() == 1)
@@ -27,7 +29,20 @@ void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
     }
     if (clientList[fd].getNickname() == "Default")
         client.welcomeMessage();
+    oldNickName = clientList[fd].getNickname();
     clientList[fd].setNickname(nickname);
+    
+    for (std::vector<IRC_Channel>::iterator channelIt = channelList.begin(); channelIt != channelList.end(); ++channelIt)
+    {
+        for (std::vector<IRC_Client>::iterator it = channelIt->_clients.begin(); it != channelIt->_clients.end(); ++it)
+        {
+            if (it->getNickname() == oldNickName)
+            {
+                it->setNickname(nickname);
+                break;
+            }
+        }
+    }
 }
 
 

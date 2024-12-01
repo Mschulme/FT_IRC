@@ -32,7 +32,6 @@ class IRC_Channel
         std::string     _name;
         std::string     _topic;
         std::string     _channelKey;
-        std::vector<IRC_Client>     _clients;
         std::vector<IRC_Client>     _operators;
         std::vector<std::string>    _invited;
         bool       _hasPassword;
@@ -43,6 +42,7 @@ class IRC_Channel
 
 
     public:
+        std::vector<IRC_Client>     _clients;
         IRC_Channel(std::string& name, IRC_Client& firstMember);
         IRC_Channel();
         ~IRC_Channel();

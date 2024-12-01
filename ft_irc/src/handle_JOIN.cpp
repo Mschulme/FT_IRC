@@ -19,6 +19,12 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
         {
             if (it->getName() == channelName)
             {
+                if (it->isMember(clientList[fd].getNickname()))
+                {
+                    clientList[fd].reply(clientList[fd].getNickname() + " is already on channel #" + channelName, fd);
+                    return;
+                }
+
                 if (it->isInviteOnly() && !it->isInvited(clientList[fd].getNickname()))
                     return (sendClientMessage("Channel #" + it->getName() + " is invite only!", fd));
                 
@@ -28,12 +34,6 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
                         return (sendClientMessage(JOIN_USAGE, fd));
                     if (!it->checkChannelKey(message[2]))
                         return (sendClientMessage(ERR_PASSWDMISMATCH(clientList[fd].getNickname()), fd));
-                }
-
-                if (it->isMember(clientList[fd].getNickname()))
-                {
-                    clientList[fd].reply(clientList[fd].getNickname() + " is already on channel #" + channelName, fd);
-                    return;
                 }
                 
                 it->addMember(clientList[fd]);
@@ -62,6 +62,7 @@ void IRC_Server::handle_JOIN(int fd, std::vector<std::string> message)
         if (!channelExists)
         {
             IRC_Channel channel = createChannel(channelName, fd, clientList);
+            channel.addMember(clientList[fd]);
 
             sendClientMessage(RPL_JOIN(clientList[fd].getNickname(), channelName), fd);
 
