@@ -8,7 +8,7 @@ void IRC_Server::handle_PART(int fd, std::vector<std::string> message)
     std::string memberNames;
     std::string channelName = message[1].substr(1);
 
-    if (message.size() < 3) {
+    if (message.size() < 2) {
         sendClientMessage(PART_USAGE, fd);
         return;
     }
