@@ -31,7 +31,8 @@ class IRC_Client
 {
 	private:
 		int 				  _clientFd;
-		bool				  _isRegistered;
+		bool				  _isRegistered_NICK;
+		bool				  _isRegistered_USER;
 		bool				  _isAuthenticated;
 		std::string 		  _ipAdd;
 		std::string     	  _nickname;
@@ -59,8 +60,11 @@ class IRC_Client
 		void	setAuthStatus(bool	status);
 		bool 	getAuthStatus();
 		
-		void	setRegisteredStatus(bool	status);
-		bool 	getRegisteredStatus();
+		void	setRegisteredStatus_NICK(bool	status);
+		bool 	getRegisteredStatus_NICK();
+
+		void	setRegisteredStatus_USER(bool	status);
+		bool 	getRegisteredStatus_USER();
 
 		void		setIpAdd(std::string ipadd){_ipAdd = ipadd;}
 

@@ -6,7 +6,8 @@ IRC_Client::IRC_Client() {}
 
 IRC_Client::IRC_Client(int fd) : _clientFd(fd)
 {
-	_isRegistered = false;
+	_isRegistered_NICK = false;
+	_isRegistered_USER = false;
 	_isAuthenticated = false;
 	_nickname = "Default";
 	_username = "Default";
@@ -38,15 +39,27 @@ void    IRC_Client::setAuthStatus(bool status)
 }
 
 
-bool    IRC_Client::getRegisteredStatus()
+bool    IRC_Client::getRegisteredStatus_USER()
 {
-	return (_isRegistered);
+	return (_isRegistered_USER);
 }
 
 
-void    IRC_Client::setRegisteredStatus(bool status)
+void    IRC_Client::setRegisteredStatus_USER(bool status)
 {
-	_isRegistered = status;
+	_isRegistered_USER = status;
+}
+
+
+bool    IRC_Client::getRegisteredStatus_NICK()
+{
+	return (_isRegistered_NICK);
+}
+
+
+void    IRC_Client::setRegisteredStatus_NICK(bool status)
+{
+	_isRegistered_NICK = status;
 }
 
 

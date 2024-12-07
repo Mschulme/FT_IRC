@@ -43,6 +43,7 @@ void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
             }
         }
     }
+    clientList[fd].setRegisteredStatus_NICK(true);
 }
 
 

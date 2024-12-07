@@ -18,9 +18,25 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 		{
 			handle_PASS(message, fd, pass);
 		}
+		else if (i == 2 && clientList[fd].getAuthStatus() == true)
+		{
+			handle_NICK(fd, message);
+		}
+		else if (i == 6 && clientList[fd].getAuthStatus() == true)
+		{
+			handle_USER(fd, message);
+		}
 		else
 		{
 			if (clientList[fd].getAuthStatus() != true)
+			{
+				return clientList[fd].reply(ERR_NOTREGISTERED(clientList[fd].getNickname()), fd);
+			}
+			if (clientList[fd].getRegisteredStatus_NICK() != true)
+			{
+				return clientList[fd].reply(ERR_NOTREGISTERED(clientList[fd].getNickname()), fd);
+			}
+			if (clientList[fd].getRegisteredStatus_USER() != true)
 			{
 				return clientList[fd].reply(ERR_NOTREGISTERED(clientList[fd].getNickname()), fd);
 			}
@@ -30,10 +46,6 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 					handle_JOIN(fd, message);
 					break;
 				
-				case 2:
-					handle_NICK(fd, message);
-					break;
-
 				case 3:
 					handle_PRIVMSG(fd, message);
 					break;
@@ -44,10 +56,6 @@ void IRC_Server::eventHandler(std::vector<std::string> &rawMessage, int fd, std:
 
 				case 5:
 					handle_MODE(fd, message);
-					break;
-
-				case 6:
-					handle_USER(fd, message);
 					break;
 
 				case 7:

@@ -12,13 +12,15 @@ void IRC_Server::handle_USER(int fd, std::vector<std::string> message)
 
 	if (username.empty() or realname.empty())
 		return clientList[fd].reply(ERR_NEEDMOREPARAMS(clientList[fd].getNickname(), "USER"), fd);
-	else if (clientList[fd].getRegisteredStatus() == true)
+	else if (clientList[fd].getRegisteredStatus_USER() == true)
+	{
 		return clientList[fd].reply(ERR_ALREADYREGISTERED(clientList[fd].getNickname()), fd);
+	}
 	else
 	{
 		clientList[fd].setUsername(username);
 		clientList[fd].setRealname(realname);
-		clientList[fd].setRegisteredStatus(true);
+		clientList[fd].setRegisteredStatus_USER(true);
 	}
 	return ;
 }
