@@ -2,16 +2,16 @@
 #define IRC_RESPONSE_HPP
 
 #define INVITE_USAGE                                    "Usage: </INVITE> <USER> #<CHANNEL>"
-#define KICK_USAGE                                      "Usage: </KICK> <NETWORK> $<CHANNEL> <NICK>"
+#define KICK_USAGE                                      "Usage: </KICK> $<CHANNEL> <NICK>"
 #define PART_USAGE                                      "Usage: </PART> #<CHANNEL> <exitMessage>"
 #define JOIN_USAGE                                      "Usage: </JOIN> #<CHANNEL> <PASSWORD>"
 #define NO_AUTH                                         ", couldn't authenticate!"
 #define TO_RUN                                          "To use program : ./ircserv <4-digit PORT> <4-8 CHAR LONG PASSWORD>"
 
-#define ERR_KICKYOURSELF                                "Can't kick yourself out. There is PART command for this"
+#define ERR_KICKYOURSELF                                "Can't kick yourself out. There is PART command for this."
 #define INFO_KICKEDOUT(channel)                         "You have been kicked out of #" + channel 
 
-#define ERR_UNKNOWNMODE(source, modechar)               std::string(":") + SERVER_IP + " 472 " + source + modechar + " :is unknown mode char to me"
+#define ERR_UNKNOWNMODE(source, modechar)               std::string(":") + SERVER_IP + " 472 " + source + modechar + " :is unknown mode char to me."
 
 #define ERR_NOTREGISTERED(source)                       std::string(":") + SERVER_IP + " 451 " + source + " :You have not registered"
 #define ERR_ALREADYREGISTERED(source)                   std::string(":") + SERVER_IP + " 462 " + source + " :Unauthorized command (already registered)"

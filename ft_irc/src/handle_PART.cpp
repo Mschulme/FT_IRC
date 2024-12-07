@@ -7,6 +7,8 @@ void IRC_Server::handle_PART(int fd, std::vector<std::string> message)
 {
     std::string memberNames;
     std::string channelName = message[1].substr(1);
+    std::vector<IRC_Channel>::iterator channelToRemove;
+    bool channelExists = false;
 
     if (message.size() < 2) {
         sendClientMessage(PART_USAGE, fd);
@@ -17,11 +19,19 @@ void IRC_Server::handle_PART(int fd, std::vector<std::string> message)
     {
         if (channelIt->getName() == channelName)
         {
+            channelExists = true;
             if (channelIt->isMember(clientList[fd].getNickname()))
             {
                 for (size_t i = 0; i < channelIt->getMembers().size(); ++i)
                 {
-                    sendClientMessage(clientList[fd].getNickname() + " has left  the " + channelName + "\r\n", channelIt->getMembers()[i].getFd());
+                    if (channelIt->getMembers()[i].getNickname() == clientList[fd].getNickname())
+                    {
+                        sendClientMessage(clientList[fd].getNickname() + " has left the " + channelName, channelIt->getMembers()[i].getFd());
+                    }
+                    else
+                    {
+                        sendClientMessage(clientList[fd].getNickname() + " has left the " + channelName + "\r\n", channelIt->getMembers()[i].getFd());
+                    }
                 }
 
                 channelIt->removeMember(clientList[fd].getNickname());
@@ -45,19 +55,22 @@ void IRC_Server::handle_PART(int fd, std::vector<std::string> message)
                     sendClientMessage(RPL_ENDOFNAMES(channelIt->getMembers()[i].getNickname(), channelName), channelIt->getMembers()[i].getFd());
                 }
 
-                sendClientMessage(RPL_NAMREPLY(clientList[fd].getNickname(), channelName, memberNames), fd);
-                sendClientMessage(RPL_ENDOFNAMES(clientList[fd].getNickname(), channelName), fd);
 
                 if (channelIt->getMembers().empty()) {
                     std::cout << "Channel " << channelIt->getName() << " is removed from server. There is no members left." << std::endl;
-                    channelList.erase(channelIt);
-                    return;
+                    channelToRemove = channelIt;
+                    break;;
                 }
             }
         }
-        else
-        {
-            sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channelName), fd);
-        }
+    }
+    if (sizeof(channelToRemove) < 1)
+    {
+        channelList.erase(channelToRemove);
+        return;
+    }
+    if (channelExists == false)
+    {
+        sendClientMessage(ERR_NOSUCHCHANNEL(clientList[fd].getNickname(), channelName), fd);
     }
 }
