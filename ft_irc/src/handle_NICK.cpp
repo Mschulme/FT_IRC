@@ -42,6 +42,14 @@ void IRC_Server::handle_NICK(int fd, std::vector<std::string> message)
                 break;
             }
         }
+        for (std::vector<IRC_Client>::iterator it = channelIt->_operators.begin(); it != channelIt->_operators.end(); ++it)
+        {
+            if (it->getNickname() == oldNickName)
+            {
+                it->setNickname(nickname);
+                break;
+            }
+        }
     }
     clientList[fd].setRegisteredStatus_NICK(true);
 }

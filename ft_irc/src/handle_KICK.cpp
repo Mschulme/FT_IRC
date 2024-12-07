@@ -70,4 +70,5 @@ void IRC_Server::handle_KICK(int fd, std::vector<std::string> message) {
             }
         }
     }
+     sendClientMessage(KICK_USAGE, fd);
 }

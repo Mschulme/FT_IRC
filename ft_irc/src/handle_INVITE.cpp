@@ -32,7 +32,13 @@ void IRC_Server::handle_INVITE(int fd, std::vector<std::string> message)
         return;
     }
 
-    if (!channel_it->isMember(clientList[fd].getNickname()) || !channel_it->isOperator(clientList[fd].getNickname()))
+    if (!channel_it->isMember(clientList[fd].getNickname()))
+    {
+        sendClientMessage(ERR_NOTONCHANNEL(clientList[fd].getNickname(), channel_name), fd);
+        return;
+    }
+
+    if (!channel_it->isOperator(clientList[fd].getNickname()))
     {
         sendClientMessage(ERR_CHANOPRIVSNEEDED(clientList[fd].getNickname(), channel_name), fd);
         return;
