@@ -23,14 +23,14 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
 
     channelName = channelName.substr(1);
     
-    IRC_Channel channel = getChannelByName(channelName);
-    if (channel.getName() != channelName) 
+    IRC_Channel *channel = getChannelByName(channelName);
+    if (channel->getName() != channelName) 
     {
         clientList[fd].reply("403 " + channelName + " :No such channel", fd);
         return;
     }
 
-    if (!channel.isOperator(clientList[fd].getNickname()))
+    if (!channel->isOperator(clientList[fd].getNickname()))
     {
         return sendClientMessage("You should be operator to change mode", fd);
     }
@@ -48,19 +48,19 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
                     add = false;
                     break;
                 case 'i':
-                    channel.handleInviteOnly(channel, add);
+                    channel->handleInviteOnly(channel, add);
                     break;
                 case 't':
-                    channel.handleTopicRestrict(channel, add);
+                    channel->handleTopicRestrict(channel, add);
                     break;
                 case 'k':
-                    channel.handleChannelKey(channel, add, parameter);
+                    channel->handleChannelKey(channel, add, parameter);
                     break;
                 case 'o':
-                    channel.handleOperatorPrivilege(channel, add, parameter);
+                    channel->handleOperatorPrivilege(channel, add, parameter);
                     break;
                 case 'l':
-                    channel.handleUserLimit(channel, add, parameter);
+                    channel->handleUserLimit(channel, add, parameter);
                     break;
                 default:
                     clientList[fd].reply(ERR_UNKNOWNMODE(clientList[fd].getNickname(), std::string(1, modeString[i])), fd);
@@ -70,16 +70,14 @@ void IRC_Server::handle_MODE(int fd, std::vector<std::string> message)
     }
 }
 
-IRC_Channel IRC_Server::getChannelByName(std::string channelName)
+IRC_Channel* IRC_Server::getChannelByName(std::string channelName)
 {
-    IRC_Channel channel;
     for (std::vector<IRC_Channel>::iterator it = channelList.begin(); it != channelList.end(); ++it)
     {
         if (it->getName() == channelName)
         {
-            channel = *it;
-            break;
+            return &(*it);
         }
     }
-    return channel;
+    return NULL;
 }

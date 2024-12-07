@@ -56,7 +56,7 @@ class IRC_Server
 
 		void parser(std::string &message, int i, std::vector<pollfd> &pfds, std::string servPass);
 
-		IRC_Channel getChannelByName(std::string channelName);
+		IRC_Channel* getChannelByName(std::string channelName);
     	IRC_Channel createChannel(std::string &name, int fd, std::map<int, IRC_Client> &clients);
 
 		void eventHandler(std::vector<std::string> &incoming, int fd, std::string &pass);

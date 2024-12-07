@@ -56,6 +56,7 @@ class IRC_Channel
         void setChannelKey(std::string& key);
         void addOperator(std::string nickname);
         void setTopicRestricted(bool topicRestricted);
+        void SetHasPassword(bool flag);
 
 
         std::string getName();
@@ -84,11 +85,11 @@ class IRC_Channel
 
 
         void broadcastMessage(std::string message);
-        void handleInviteOnly(IRC_Channel& channel, bool add);
-        void handleTopicRestrict(IRC_Channel& channel, bool add);
-        void handleChannelKey(IRC_Channel& channel, bool add, std::string& key);
-        void handleOperatorPrivilege(IRC_Channel& channel, bool add, const std::string& user);
-        void handleUserLimit(IRC_Channel& channel, bool add, const std::string& limit);
+        void handleInviteOnly(IRC_Channel* channel, bool add);
+        void handleTopicRestrict(IRC_Channel* channel, bool add);
+        void handleChannelKey(IRC_Channel* channel, bool add, std::string& key);
+        void handleOperatorPrivilege(IRC_Channel* channel, bool add, const std::string& user);
+        void handleUserLimit(IRC_Channel* channel, bool add, const std::string& limit);
 
 };
 
